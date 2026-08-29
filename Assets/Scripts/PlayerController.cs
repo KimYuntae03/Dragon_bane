@@ -16,14 +16,28 @@ public class PlayerController : MonoBehaviour
     private static readonly int PunchRightHash = Animator.StringToHash("Attackright");
     private static readonly int PunchLeftHash = Animator.StringToHash("Attackleft");
 
+    private static readonly int IsGuardingHash =Animator.StringToHash("IsGuarding");
+
     private void Update()
     {
         CheckAttackState();
 
-        if (Keyboard.current != null &&
-            Keyboard.current.aKey.wasPressedThisFrame)
+        if (Keyboard.current != null)
         {
-            TryAttack();
+            if (Keyboard.current.aKey.wasPressedThisFrame)
+            {
+                TryAttack();
+            }
+
+            if (Keyboard.current.sKey.wasPressedThisFrame)
+            {
+                StartGuard();
+            }
+
+            if (Keyboard.current.sKey.wasReleasedThisFrame)
+            {
+                StopGuard();
+            }
         }
     }
 
@@ -85,5 +99,18 @@ public class PlayerController : MonoBehaviour
             hasEnteredAttackState = false;
             attackQueued = false;
         }
+    }
+
+    private void StartGuard()
+    {
+        if (isAttacking)
+            return;
+
+        animator.SetBool(IsGuardingHash, true);
+    }
+
+    private void StopGuard()
+    {
+        animator.SetBool(IsGuardingHash, false);
     }
 }
