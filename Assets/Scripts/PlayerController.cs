@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     private bool useRightAttack = true;
     private bool attackQueued = false;
     private bool isDodging = false;
+    private bool isDead = false;
 
     private static readonly int AttackRightHash = Animator.StringToHash("AttackRight");
     private static readonly int AttackLeftHash = Animator.StringToHash("AttackLeft");
@@ -34,31 +35,44 @@ public class PlayerController : MonoBehaviour
 
     private static readonly int DodgeRightStateHash = Animator.StringToHash("Dodge_Right");
         
+    private static readonly int DieHash = Animator.StringToHash("Die");
+
     private void Update()
     {
-        CheckAttackState();
-        CheckDodgeState();
-
-        if (Keyboard.current != null)
+        if (!isDead)
         {
-            if (Keyboard.current.aKey.wasPressedThisFrame)
-                TryAttack();
-            
-
-            if (Keyboard.current.sKey.wasPressedThisFrame)
-                StartGuard();
-            
-
-            if (Keyboard.current.sKey.wasReleasedThisFrame)
-                StopGuard();
-            
-
-            if (Keyboard.current.qKey.wasPressedThisFrame)
-                TryDodgeLeft();
-
-            if (Keyboard.current.eKey.wasPressedThisFrame)
-                TryDodgeRight();
+            CheckAttackState();
+            CheckDodgeState();
         }
+
+        if (Keyboard.current == null)
+            return;
+
+        // 임시 사망 테스트
+        if (Keyboard.current.dKey.wasPressedThisFrame)
+        {
+            Die();
+            return;
+        }
+
+        // 죽은 뒤 모든 조작 차단
+        if (isDead)
+            return;
+
+        if (Keyboard.current.aKey.wasPressedThisFrame)
+            TryAttack();
+
+        if (Keyboard.current.sKey.wasPressedThisFrame)
+            StartGuard();
+
+        if (Keyboard.current.sKey.wasReleasedThisFrame)
+            StopGuard();
+
+        if (Keyboard.current.qKey.wasPressedThisFrame)
+            TryDodgeLeft();
+
+        if (Keyboard.current.eKey.wasPressedThisFrame)
+            TryDodgeRight();
     }
 
     private void TryAttack()
@@ -181,114 +195,124 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-private IEnumerator DodgeAroundDragon(float angle, int dodgeStateHash)
-{
-    Vector3 center = dragon.position;
-
-    Vector3 startPosition = transform.position;
-    Vector3 startOffset = startPosition - center;
-
-    // 최종 도착 위치 계산
-    Quaternion finalOrbitRotation =
-        Quaternion.Euler(0f, angle, 0f);
-
-    Vector3 targetPosition =
-        center + finalOrbitRotation * startOffset;
-
-
-    // =========================
-    // 구르기 시작 방향 결정
-    // =========================
-
-    // 현재 위치 → 도착 위치 방향
-    Vector3 dodgeDirection =
-        targetPosition - startPosition;
-
-    dodgeDirection.y = 0f;
-
-    if (dodgeDirection.sqrMagnitude > 0.001f)
+    private IEnumerator DodgeAroundDragon(float angle, int dodgeStateHash)
     {
-        float directionOffset = 0f;
+        Vector3 center = dragon.position;
 
-        if (angle > 0f) // 왼쪽 구르기
+        Vector3 startPosition = transform.position;
+        Vector3 startOffset = startPosition - center;
+
+        // 최종 도착 위치 계산
+        Quaternion finalOrbitRotation =
+            Quaternion.Euler(0f, angle, 0f);
+
+        Vector3 targetPosition =
+            center + finalOrbitRotation * startOffset;
+
+        // 구르기 시작 방향 결정
+
+        // 현재 위치 → 도착 위치 방향
+        Vector3 dodgeDirection =
+            targetPosition - startPosition;
+
+        dodgeDirection.y = 0f;
+
+        if (dodgeDirection.sqrMagnitude > 0.001f)
         {
-            directionOffset = 30f;
+            float directionOffset = 0f;
+
+            if (angle > 0f) // 왼쪽 구르기
+            {
+                directionOffset = 30f;
+            }
+            else if (angle < 0f) // 오른쪽 구르기
+            {
+                directionOffset = 40f;
+            }
+
+            playerModel.rotation =
+                Quaternion.LookRotation(dodgeDirection.normalized)
+                * Quaternion.Euler(0f, directionOffset, 0f);
         }
-        else if (angle < 0f) // 오른쪽 구르기
+
+        // 실제 Dodge State 진입 대기
+
+        while (true)
         {
-            directionOffset = 40f;
+            AnimatorStateInfo stateInfo =
+                animator.GetCurrentAnimatorStateInfo(0);
+
+            if (stateInfo.shortNameHash == dodgeStateHash)
+                break;
+
+            yield return null;
         }
+        // 애니메이션 진행률에 맞춰 원호 이동
+
+        while (true)
+        {
+            AnimatorStateInfo stateInfo =
+                animator.GetCurrentAnimatorStateInfo(0);
+
+            if (stateInfo.shortNameHash != dodgeStateHash)
+                break;
+
+            float t =
+                Mathf.Clamp01(stateInfo.normalizedTime);
+
+            Quaternion orbitRotation =
+                Quaternion.Euler(0f, angle * t, 0f);
+
+            transform.position =
+                center + orbitRotation * startOffset;
+
+            // 구르는 동안에는 방향 변경 안 함
+
+            yield return null;
+        }
+
+        // 최종 위치 정확히 맞춤
+        transform.position = targetPosition;
+
+        // 구르기가 끝난 뒤에만 Dragon을 바라봄
+        FaceDragon();
+    }
+    private void FaceDragon()
+    {
+        Vector3 direction =
+            dragon.position - playerModel.position;
+
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude < 0.001f)
+            return;
 
         playerModel.rotation =
-            Quaternion.LookRotation(dodgeDirection.normalized)
-            * Quaternion.Euler(0f, directionOffset, 0f);
+            Quaternion.LookRotation(direction.normalized);
     }
 
-
-    // =========================
-    // 실제 Dodge State 진입 대기
-    // =========================
-
-    while (true)
+    private void Die()
     {
-        AnimatorStateInfo stateInfo =
-            animator.GetCurrentAnimatorStateInfo(0);
+        if (isDead)
+            return;
 
-        if (stateInfo.shortNameHash == dodgeStateHash)
-            break;
+        isDead = true;
 
-        yield return null;
+        // 현재 행동 상태 정리
+        isAttacking = false;
+        isDodging = false;
+        attackQueued = false;
+        hasEnteredAttackState = false;
+
+        // 방어 중이었다면 해제
+        animator.SetBool(IsGuardingHash, false);
+
+        // 남아 있는 공격/회피 Trigger 제거
+        animator.ResetTrigger(AttackRightHash);
+        animator.ResetTrigger(AttackLeftHash);
+        animator.ResetTrigger(DodgeLeftHash);
+        animator.ResetTrigger(DodgeRightHash);
+
+        animator.SetTrigger(DieHash);
     }
-
-
-    // =========================
-    // 애니메이션 진행률에 맞춰 원호 이동
-    // =========================
-
-    while (true)
-    {
-        AnimatorStateInfo stateInfo =
-            animator.GetCurrentAnimatorStateInfo(0);
-
-        if (stateInfo.shortNameHash != dodgeStateHash)
-            break;
-
-        float t =
-            Mathf.Clamp01(stateInfo.normalizedTime);
-
-        Quaternion orbitRotation =
-            Quaternion.Euler(0f, angle * t, 0f);
-
-        transform.position =
-            center + orbitRotation * startOffset;
-
-        // 구르는 동안에는 방향 변경 안 함
-
-        yield return null;
-    }
-
-
-    // =========================
-    // 회피 종료
-    // =========================
-
-    // 최종 위치 정확히 맞춤
-    transform.position = targetPosition;
-
-    // 구르기가 끝난 뒤에만 Dragon을 바라봄
-    FaceDragon();
-}
-private void FaceDragon()
-{
-    Vector3 direction =
-        dragon.position - playerModel.position;
-
-    direction.y = 0f;
-
-    if (direction.sqrMagnitude < 0.001f)
-        return;
-
-    playerModel.rotation =
-        Quaternion.LookRotation(direction.normalized);
-}
 }
