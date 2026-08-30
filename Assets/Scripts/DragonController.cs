@@ -15,6 +15,9 @@ public class DragonController : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private float attackDelay  = 10f;
 
+    [Header("Effect")]
+    [SerializeField] private ParticleSystem flameEffect;
+
     private bool isDead = false;
 
     private static readonly int ClawAttackHash =
@@ -100,5 +103,18 @@ public class DragonController : MonoBehaviour
         animator.ResetTrigger(FlameAttackHash);
 
         animator.SetTrigger(DieHash);
+    }
+
+    public void StartFlame()
+    {
+        Debug.Log("StartFlame 호출됨");
+        if (flameEffect != null)
+            flameEffect.Play();
+    }
+
+    public void StopFlame()
+    {
+        if (flameEffect != null)
+            flameEffect.Stop();
     }
 }
