@@ -244,6 +244,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -319,7 +320,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.043619405, y: 0, z: 0, w: 0.9990483}
-  m_LocalPosition: {x: -0.5, y: 2, z: -3}
+  m_LocalPosition: {x: 0, y: 2, z: -3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -369,6 +370,24 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &330585548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8b8a0b2300888e4584eef90ca587c9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
+  player: {fileID: 1981826448}
+  dragon: {fileID: 2074560848}
+  backDistance: 3
+  height: 2
+  followSpeed: 12
+  rotationSpeed: 8
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,7 +574,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 5f7840406c828e148a29c79e1e5840e9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.25985
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5f7840406c828e148a29c79e1e5840e9, type: 3}
       propertyPath: m_LocalPosition.y
@@ -563,7 +582,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5f7840406c828e148a29c79e1e5840e9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.97317
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5f7840406c828e148a29c79e1e5840e9, type: 3}
       propertyPath: m_LocalRotation.w
@@ -603,13 +622,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: d0ed43355c50d4248bb03b641a38c3fa, type: 2}
     - target: {fileID: 5866666021909216657, guid: 5f7840406c828e148a29c79e1e5840e9, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:LeftFoot'\n\tTransform
-        'mixamorig:Spine1'\n\tTransform 'mixamorig:LeftToeBase'\n\tTransform 'mixamorig:RightArm'\n\tTransform
-        'mixamorig:LeftLeg'\n\tTransform 'mixamorig:LeftShoulder'\n\tTransform 'mixamorig:RightFoot'\n\tTransform
-        'mixamorig:Head'\n\tTransform 'mixamorig:LeftUpLeg'\n\tand more ...\n\tFrom
-        animation clip 'mixamo.com'"
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 5f7840406c828e148a29c79e1e5840e9, type: 3}
       propertyPath: m_ApplyRootMotion
@@ -682,7 +695,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eb58e8f2831a51f45a44a261e6710cdd, type: 3}
---- !u!95 &996602056 stripped
+--- !u!95 &1227601495 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 5f7840406c828e148a29c79e1e5840e9, type: 3}
   m_PrefabInstance: {fileID: 867550389}
@@ -732,7 +745,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e2a2fd8b5e95d944829b419419b6f36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  animator: {fileID: 996602056}
+  animator: {fileID: 1227601495}
+  dragon: {fileID: 2074560848}
+  playerModel: {fileID: 867550390}
+  dodgeAngle: 20
+--- !u!4 &2074560848 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 485588, guid: eb58e8f2831a51f45a44a261e6710cdd, type: 3}
+  m_PrefabInstance: {fileID: 958860401}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
