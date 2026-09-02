@@ -18,6 +18,12 @@ public class DragonController : MonoBehaviour
     [Header("Effect")]
     [SerializeField] private ParticleSystem flameEffect;
 
+    [Header("Attack Hitbox")]
+    [SerializeField] private GameObject chargeHitbox;
+    [SerializeField] private GameObject flameHitbox;
+
+    [SerializeField] private Transform flamePoint;
+
     private bool isDead = false;
 
     private static readonly int ClawAttackHash =
@@ -34,6 +40,7 @@ public class DragonController : MonoBehaviour
     {
         StartCoroutine(AttackRoutine());
     }
+    
 
     private void Update()
     {
@@ -107,14 +114,45 @@ public class DragonController : MonoBehaviour
 
     public void StartFlame()
     {
-        Debug.Log("StartFlame 호출됨");
+        if (player != null && flamePoint != null)
+        {
+            Vector3 direction =
+                player.position - flamePoint.position;
+
+            direction.y = 0f;
+
+            if (direction.sqrMagnitude > 0.001f)
+            {
+                flamePoint.rotation =
+                    Quaternion.LookRotation(direction.normalized);
+            }
+        }
+
         if (flameEffect != null)
             flameEffect.Play();
+
+        if (flameHitbox != null)
+            flameHitbox.SetActive(true);
     }
 
     public void StopFlame()
     {
         if (flameEffect != null)
             flameEffect.Stop();
+
+        if (flameHitbox != null)
+            flameHitbox.SetActive(false);
+    }
+
+    public void StartChargeHitbox()
+    {
+        if (chargeHitbox != null)
+            chargeHitbox.SetActive(true);
+    }
+
+    public void StopChargeHitbox()
+    {
+        if (chargeHitbox != null)
+            chargeHitbox.SetActive(false);
     }
 }
