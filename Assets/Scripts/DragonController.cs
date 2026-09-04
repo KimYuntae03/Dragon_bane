@@ -25,6 +25,7 @@ public class DragonController : MonoBehaviour
     [SerializeField] private Transform flamePoint;
 
     private bool isDead = false;
+    private bool isAttacking = false;
 
     private static readonly int ClawAttackHash =
         Animator.StringToHash("ClawAttack");
@@ -47,24 +48,32 @@ public class DragonController : MonoBehaviour
         if (isDead)
             return;
 
-        FacePlayer();
+        if (!isAttacking)
+        {
+            FacePlayer();
+        }
     }
 
     private IEnumerator AttackRoutine()
-{
-    while (!isDead)
     {
-        yield return new WaitForSeconds(attackDelay);
+        while (!isDead)
+        {
+            yield return new WaitForSeconds(attackDelay);
 
-        if (isDead)
-            yield break;
+            if (isDead)
+                yield break;
 
-        RandomAttack();
+            RandomAttack();
+        }
     }
-}
 
     private void RandomAttack()
     {
+        if (isAttacking)
+            return;
+        FacePlayer();
+        isAttacking = true;
+
         int randomAttack = Random.Range(0, 2);
 
         if (randomAttack == 0)
@@ -154,5 +163,10 @@ public class DragonController : MonoBehaviour
     {
         if (chargeHitbox != null)
             chargeHitbox.SetActive(false);
+    }
+
+    public void EndAttack()
+    {
+        isAttacking = false;
     }
 }

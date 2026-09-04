@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform dragon;
     [SerializeField] private Transform playerModel;
 
-    [SerializeField] private float dodgeAngle = 20f;
+    [SerializeField] private float dodgeAngle = 25f;
 
     private bool isAttacking = false;
     private bool hasEnteredAttackState = false;
@@ -19,6 +19,9 @@ public class PlayerController : MonoBehaviour
     private bool attackQueued = false;
     private bool isDodging = false;
     private bool isDead = false;
+
+    private bool isGuarding = false;
+    public bool IsGuarding => isGuarding;
 
     private int attackCount = 0;
     private const int PowerAttackRequirement = 7;
@@ -228,11 +231,13 @@ public class PlayerController : MonoBehaviour
             return;
 
         ResetAttackChain();
+        isGuarding = true;
         animator.SetBool(IsGuardingHash, true);
     }
 
     private void StopGuard()
     {
+        isGuarding = false;
         animator.SetBool(IsGuardingHash, false);
     }
     
@@ -395,6 +400,7 @@ public class PlayerController : MonoBehaviour
         hasEnteredAttackState = false;
 
         // 방어 중이었다면 해제
+        isGuarding = false;
         animator.SetBool(IsGuardingHash, false);
 
         // 남아 있는 공격/회피 Trigger 제거
