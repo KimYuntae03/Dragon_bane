@@ -57,12 +57,6 @@ public class PlayerController : MonoBehaviour
         if (Keyboard.current == null)
             return;
 
-        // 임시 사망 테스트
-        if (Keyboard.current.dKey.wasPressedThisFrame)
-        {
-            Die();
-            return;
-        }
 
         // 죽은 뒤 모든 조작 차단
         if (isDead)
@@ -386,7 +380,7 @@ public class PlayerController : MonoBehaviour
             Quaternion.LookRotation(direction.normalized);
     }
 
-    private void Die()
+    public void Die()
     {
         if (isDead)
             return;
@@ -420,7 +414,5 @@ public class PlayerController : MonoBehaviour
     private void RegisterNormalAttack()
     {
         attackCount++;
-
-        Debug.Log($"Attack Count : {attackCount}/{PowerAttackRequirement}");
     }
 }
