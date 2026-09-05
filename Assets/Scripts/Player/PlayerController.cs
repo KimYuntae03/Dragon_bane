@@ -233,6 +233,7 @@ public class PlayerController : MonoBehaviour
             hasEnteredAttackState &&
             !animator.IsInTransition(0))
         {
+            Debug.Log("공격 상태 종료");
             isAttacking = false;
             hasEnteredAttackState = false;
             attackQueued = false;
