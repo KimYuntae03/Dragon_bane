@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float dodgeAngle = 25f;
 
+    [SerializeField] private PlayerShield playerShield;
+
     private bool isAttacking = false;
     private bool hasEnteredAttackState = false;
     private bool useRightAttack = true;
@@ -27,6 +29,8 @@ public class PlayerController : MonoBehaviour
     private const int PowerAttackRequirement = 7;
     private int currentNormalAttackStateHash = 0;
     private bool powerAttackStarted = false;
+
+    
 
     private static readonly int AttackRightHash = Animator.StringToHash("AttackRight");
     private static readonly int AttackLeftHash = Animator.StringToHash("AttackLeft");
@@ -67,9 +71,20 @@ public class PlayerController : MonoBehaviour
 
         if (Keyboard.current.aKey.wasPressedThisFrame)
             TryAttack();
-
+        
         if (Keyboard.current.sKey.wasPressedThisFrame)
-            StartGuard();
+        {
+            if (!isAttacking && !isDodging)
+            {
+                ResetAttackChain();
+                playerShield.StartGuard();
+            }
+        }
+
+        if (Keyboard.current.sKey.wasReleasedThisFrame)
+        {
+            playerShield.StopGuard();
+        }
 
         if (Keyboard.current.sKey.wasReleasedThisFrame)
             StopGuard();
@@ -391,7 +406,8 @@ public class PlayerController : MonoBehaviour
             return;
 
         isDead = true;
-        ResetAttackChain();
+        ResetAttackChain(); //연속공격 끊김
+        playerShield.StopGuard(); //쉴드 중지
 
         // 현재 행동 상태 정리
         isAttacking = false;

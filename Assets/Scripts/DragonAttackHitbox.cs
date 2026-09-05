@@ -22,27 +22,28 @@ public class DragonAttackHitbox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Shield"))
+            return; //Claw공격은 쉴드로 못막게 설계
+
         if (hasHitPlayer)
             return;
 
         PlayerHealth playerHealth =
             other.GetComponentInParent<PlayerHealth>();
-        PlayerController playerController =
-            other.GetComponentInParent<PlayerController>();
+        PlayerShield playerShield =
+            other.GetComponentInParent<PlayerShield>();
 
         if (playerHealth == null)
             return;
 
         if (attackType == AttackType.Flame &&
-            playerController != null &&
-            playerController.IsGuarding)
+            playerShield != null &&
+            playerShield.IsGuarding)
         {
             hasHitPlayer = true;
 
-            Debug.Log("Flame Attack 방어 성공");
             return;
         }
-        
 
         hasHitPlayer = true;
 
