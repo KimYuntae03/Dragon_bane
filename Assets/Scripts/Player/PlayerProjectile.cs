@@ -45,7 +45,7 @@ public class PlayerProjectile : MonoBehaviour
 
         Vector3 moveDirection =
             targetDirection +
-            curveDirection * curveStrength * curveAmount;
+            curveDirection * curveStrength * curveAmount+ Vector3.up * 0.4f;;
 
         moveDirection.Normalize();
 

@@ -8112,7 +8112,7 @@ MonoBehaviour:
   player: {fileID: 1981826448}
   rotationSpeed: 3
   animator: {fileID: 2074560850}
-  attackDelay: 4
+  attackDelay: 6
   flameEffect: {fileID: 636340078}
   chargeHitbox: {fileID: 1781505154}
   flameHitbox: {fileID: 1349809365}
