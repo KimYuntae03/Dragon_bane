@@ -14,8 +14,16 @@ public class PlayerHealth : MonoBehaviour
     [Header("Controller")]
     [SerializeField] private PlayerController playerController;
 
+    //플레이어 피격 시 애니메이션 호출 변수
+    [SerializeField] private PlayerHitReaction hitReaction;
+
     private float currentHealth;
     private bool isDead = false;
+    public enum HitType
+    {
+        Claw,
+        Flame
+    }
 
     private void Awake()
     {
@@ -23,7 +31,7 @@ public class PlayerHealth : MonoBehaviour
         UpdateHealthUI();
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, HitType hitType)
     {
         if (isDead)
             return;
@@ -36,6 +44,14 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth <= 0f)
         {
             Die();
+            return;
+        }
+         if (hitReaction != null)
+        {
+            if (hitType == HitType.Claw)
+                hitReaction.PlayClawHitReaction();
+            else if (hitType == HitType.Flame)
+                hitReaction.PlayFlameHitReaction();
         }
     }
 

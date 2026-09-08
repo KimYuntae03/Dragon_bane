@@ -61,7 +61,7 @@ public class DragonAttackHitbox : MonoBehaviour
 
         // 쉴드를 풀었는데 Flame 안에 아직 있으면 데미지
         hasHitPlayer = true;
-        playerHealth.TakeDamage(damage);
+        playerHealth.TakeDamage(damage,PlayerHealth.HitType.Flame);
     }
 
     private void TryDamagePlayer(Collider other)
@@ -76,6 +76,6 @@ public class DragonAttackHitbox : MonoBehaviour
             return;
 
         hasHitPlayer = true;
-        playerHealth.TakeDamage(damage);
+        playerHealth.TakeDamage(damage,PlayerHealth.HitType.Claw);
     }
 }
