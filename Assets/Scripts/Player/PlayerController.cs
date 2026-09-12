@@ -1,31 +1,19 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
     [Header("Animation")]
     [SerializeField] private Animator animator;
-
-    [Header("Dodge")]
-    [SerializeField] private Transform dragon;
-    [SerializeField] private Transform playerModel;
-
-    [SerializeField] private float dodgeAngle = 25f;
-
+    
     [SerializeField] private PlayerShield playerShield;
 
-    [SerializeField] private PlayerHitReaction hitReaction;
+    [SerializeField] private PlayerDodge playerDodge;
 
     private bool isAttacking = false;
     private bool hasEnteredAttackState = false;
     private bool useRightAttack = true;
-    private bool attackQueued = false;
-    private bool isDodging = false;
     private bool isDead = false;
-
-    private bool isGuarding = false;
-    public bool IsGuarding => isGuarding;
 
     private int attackCount = 0;
     private const int PowerAttackRequirement = 7;
@@ -38,16 +26,6 @@ public class PlayerController : MonoBehaviour
     private static readonly int AttackLeftHash = Animator.StringToHash("AttackLeft");
     private static readonly int PunchRightHash = Animator.StringToHash("Attackright");
     private static readonly int PunchLeftHash = Animator.StringToHash("Attackleft");
-
-    private static readonly int IsGuardingHash = Animator.StringToHash("IsGuarding");
-
-    private static readonly int DodgeLeftHash = Animator.StringToHash("DodgeLeft");
-
-    private static readonly int DodgeLeftStateHash = Animator.StringToHash("Dodge_Left");
-
-    private static readonly int DodgeRightHash = Animator.StringToHash("DodgeRight");
-
-    private static readonly int DodgeRightStateHash = Animator.StringToHash("Dodge_Right");
         
     private static readonly int DieHash = Animator.StringToHash("Die");
 
@@ -60,7 +38,6 @@ public class PlayerController : MonoBehaviour
         if (!isDead)
         {
             CheckAttackState();
-            CheckDodgeState();
         }
 
         if (Keyboard.current == null)
@@ -76,7 +53,7 @@ public class PlayerController : MonoBehaviour
         
         if (Keyboard.current.sKey.wasPressedThisFrame)
         {
-            if (!isDodging)
+            if (!playerDodge.IsDodging)
             {
                 CancelAttack();
                 playerShield.StartGuard();
@@ -89,21 +66,27 @@ public class PlayerController : MonoBehaviour
         }
 
         if (Keyboard.current.qKey.wasPressedThisFrame)
-            TryDodgeLeft();
+        {
+            CancelAttack();
+            playerShield.StopGuard();
+            playerDodge.DodgeLeft();
+        }
 
         if (Keyboard.current.eKey.wasPressedThisFrame)
-            TryDodgeRight();
+        {
+            CancelAttack();
+            playerShield.StopGuard();
+            playerDodge.DodgeRight();
+        }
     }
 
     private void TryAttack()
     {
-        if (isDodging || isAttacking)
+        if (playerDodge.IsDodging || isAttacking)
             return;
 
         isAttacking = true;
         hasEnteredAttackState = false;
-        attackQueued = false;
-
 
         // 일반 공격 7회 누적 후
         // 8번째 공격은 강화공격
@@ -164,9 +147,6 @@ public class PlayerController : MonoBehaviour
 
                 currentNormalAttackStateHash =
                     stateInfo.shortNameHash;
-
-                // 다음 공격 예약 가능
-                attackQueued = false;
             }
 
             return;
@@ -207,170 +187,8 @@ public class PlayerController : MonoBehaviour
             Debug.Log("공격 상태 종료");
             isAttacking = false;
             hasEnteredAttackState = false;
-            attackQueued = false;
             powerAttackStarted = false;
         }
-    }
-
-    private void StartGuard()
-    {
-        if (isAttacking || isDodging)
-            return;
-
-        ResetAttackChain();
-        isGuarding = true;
-        animator.SetBool(IsGuardingHash, true);
-    }
-
-    private void StopGuard()
-    {
-        isGuarding = false;
-        animator.SetBool(IsGuardingHash, false);
-    }
-    
-    private void TryDodgeLeft()
-    {
-        if (isDodging)
-            return;
-        CancelAttack();
-
-        animator.SetBool(IsGuardingHash, false);
-
-        isDodging = true;
-        animator.SetTrigger(DodgeLeftHash);
-
-        StartCoroutine(DodgeAroundDragon(dodgeAngle,DodgeLeftStateHash));
-    }
-
-    private void TryDodgeRight()
-    {
-        if (isDodging)
-            return;
-
-        CancelAttack();
-
-        animator.SetBool(IsGuardingHash, false);
-
-        isDodging = true;
-        animator.SetTrigger(DodgeRightHash);
-
-        StartCoroutine(DodgeAroundDragon(-dodgeAngle,DodgeRightStateHash));
-    }
-
-    private void CheckDodgeState()
-    {
-        if (!isDodging)
-            return;
-        
-        ResetAttackChain();
-
-        AnimatorStateInfo stateInfo =
-            animator.GetCurrentAnimatorStateInfo(0);
-
-        bool isDodgeState =
-            stateInfo.shortNameHash == DodgeLeftStateHash ||
-            stateInfo.shortNameHash == DodgeRightStateHash;
-
-        if (!isDodgeState && !animator.IsInTransition(0))
-        {
-            isDodging = false;
-        }
-    }
-
-    private IEnumerator DodgeAroundDragon(float angle, int dodgeStateHash)
-    {
-        Vector3 center = dragon.position;
-
-        Vector3 startPosition = transform.position;
-        Vector3 startOffset = startPosition - center;
-
-        // 최종 도착 위치 계산
-        Quaternion finalOrbitRotation =
-            Quaternion.Euler(0f, angle, 0f);
-
-        Vector3 targetPosition =
-            center + finalOrbitRotation * startOffset;
-
-        // 구르기 시작 방향 결정
-
-        // 현재 위치 → 도착 위치 방향
-        Vector3 dodgeDirection =
-            targetPosition - startPosition;
-
-        dodgeDirection.y = 0f;
-
-        if (dodgeDirection.sqrMagnitude > 0.001f)
-        {
-            float directionOffset = 0f;
-
-            if (angle > 0f) // 왼쪽 구르기
-            {
-                directionOffset = 30f;
-            }
-            else if (angle < 0f) // 오른쪽 구르기
-            {
-                directionOffset = 40f;
-            }
-
-            playerModel.rotation =
-                Quaternion.LookRotation(dodgeDirection.normalized)
-                * Quaternion.Euler(0f, directionOffset, 0f);
-        }
-
-        // 실제 Dodge State 진입 대기
-
-        while (true)
-        {
-            AnimatorStateInfo stateInfo =
-                animator.GetCurrentAnimatorStateInfo(0);
-
-            if (stateInfo.shortNameHash == dodgeStateHash)
-                break;
-
-            yield return null;
-        }
-        // 애니메이션 진행률에 맞춰 원호 이동
-
-        while (true)
-        {
-            AnimatorStateInfo stateInfo =
-                animator.GetCurrentAnimatorStateInfo(0);
-
-            if (stateInfo.shortNameHash != dodgeStateHash)
-                break;
-
-            float t =
-                Mathf.Clamp01(stateInfo.normalizedTime);
-
-            Quaternion orbitRotation =
-                Quaternion.Euler(0f, angle * t, 0f);
-
-            transform.position =
-                center + orbitRotation * startOffset;
-
-            // 구르는 동안에는 방향 변경 안 함
-
-            yield return null;
-        }
-
-        // 최종 위치 정확히 맞춤
-        transform.position = targetPosition;
-
-        // 구르기가 끝난 뒤에만 Dragon을 바라봄
-        FaceDragon();
-    }
-    private void FaceDragon()
-    {
-        Vector3 direction =
-            dragon.position - playerModel.position;
-
-        direction.y = 0f;
-
-        if (direction.sqrMagnitude < 0.001f)
-            return;
-
-        playerModel.rotation =
-            Quaternion.LookRotation(direction.normalized);
     }
 
     public void Die()
@@ -379,24 +197,18 @@ public class PlayerController : MonoBehaviour
             return;
 
         isDead = true;
+
         ResetAttackChain(); //연속공격 끊김
         playerShield.StopGuard(); //쉴드 중지
+        playerDodge.CancelDodge();   // 추가
 
         // 현재 행동 상태 정리
         isAttacking = false;
-        isDodging = false;
-        attackQueued = false;
         hasEnteredAttackState = false;
-
-        // 방어 중이었다면 해제
-        isGuarding = false;
-        animator.SetBool(IsGuardingHash, false);
 
         // 남아 있는 공격/회피 Trigger 제거
         animator.ResetTrigger(AttackRightHash);
         animator.ResetTrigger(AttackLeftHash);
-        animator.ResetTrigger(DodgeLeftHash);
-        animator.ResetTrigger(DodgeRightHash);
         animator.ResetTrigger(PowerAttackHash);
 
         animator.SetTrigger(DieHash);
@@ -405,7 +217,6 @@ public class PlayerController : MonoBehaviour
     private void ResetAttackChain()
     {
         attackCount = 0;
-        attackQueued = false;
         currentNormalAttackStateHash = 0;
         powerAttackStarted = false;
 
@@ -420,7 +231,6 @@ public class PlayerController : MonoBehaviour
 
     private void CancelAttack()
     {
-        attackQueued = false;
         isAttacking = false;
         hasEnteredAttackState = false;
         currentNormalAttackStateHash = 0;

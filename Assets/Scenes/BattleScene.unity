@@ -7742,7 +7742,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3, y: 3, z: 1}
+  m_Size: {x: 4, y: 4, z: 1}
   m_Center: {x: 0, y: 0, z: 1}
 --- !u!114 &1781505157
 MonoBehaviour:
@@ -7954,6 +7954,7 @@ GameObject:
   - component: {fileID: 1981826453}
   - component: {fileID: 1981826452}
   - component: {fileID: 1981826454}
+  - component: {fileID: 1981826456}
   - component: {fileID: 1981826455}
   m_Layer: 0
   m_Name: Player
@@ -7993,11 +7994,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   animator: {fileID: 1227601495}
-  dragon: {fileID: 2074560848}
-  playerModel: {fileID: 867550390}
-  dodgeAngle: 20
   playerShield: {fileID: 1981826453}
-  hitReaction: {fileID: 1981826455}
+  playerDodge: {fileID: 1981826456}
 --- !u!114 &1981826450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8110,6 +8108,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHitReaction
   animator: {fileID: 1227601495}
   playerShield: {fileID: 1981826453}
+--- !u!114 &1981826456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1981826447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3417e18f34cad146933f6b8c2ce78d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDodge
+  animator: {fileID: 1227601495}
+  dragon: {fileID: 2074560848}
+  playerModel: {fileID: 867550390}
+  dodgeAngle: 25
 --- !u!4 &2074560848 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 485588, guid: eb58e8f2831a51f45a44a261e6710cdd, type: 3}
