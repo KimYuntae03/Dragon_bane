@@ -4,6 +4,8 @@ public class PlayerHitReaction : MonoBehaviour
 {
     [SerializeField] private Animator animator;
 
+    [SerializeField] private PlayerShield playerShield;
+
     private bool isHitReacting = false;
 
     private static readonly int HitClawHash =
@@ -20,6 +22,10 @@ public class PlayerHitReaction : MonoBehaviour
             return;
 
         isHitReacting = true;
+
+        if (playerShield != null)
+            playerShield.StopGuard();
+
         animator.SetTrigger(HitClawHash);
     }
 
@@ -29,6 +35,10 @@ public class PlayerHitReaction : MonoBehaviour
             return;
 
         isHitReacting = true;
+
+        if (playerShield != null)
+            playerShield.StopGuard();
+            
         animator.SetTrigger(HitFlameHash);
     }
 

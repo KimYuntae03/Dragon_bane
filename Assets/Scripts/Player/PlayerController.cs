@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private PlayerShield playerShield;
 
+    [SerializeField] private PlayerHitReaction hitReaction;
+
     private bool isAttacking = false;
     private bool hasEnteredAttackState = false;
     private bool useRightAttack = true;
@@ -74,9 +76,9 @@ public class PlayerController : MonoBehaviour
         
         if (Keyboard.current.sKey.wasPressedThisFrame)
         {
-            if (!isAttacking && !isDodging)
+            if (!isDodging)
             {
-                ResetAttackChain();
+                CancelAttack();
                 playerShield.StartGuard();
             }
         }
@@ -85,9 +87,6 @@ public class PlayerController : MonoBehaviour
         {
             playerShield.StopGuard();
         }
-
-        if (Keyboard.current.sKey.wasReleasedThisFrame)
-            StopGuard();
 
         if (Keyboard.current.qKey.wasPressedThisFrame)
             TryDodgeLeft();
@@ -98,36 +97,8 @@ public class PlayerController : MonoBehaviour
 
     private void TryAttack()
     {
-        if (isDodging)
+        if (isDodging || isAttacking)
             return;
-
-        if (isAttacking)
-        {
-            // 이미 다음 공격 하나가 예약돼 있으면 추가 입력 무시
-            if (attackQueued)
-                return;
-
-            attackQueued = true;
-
-            // 일반 공격 7회가 쌓였다면
-            // 다음 공격은 강화공격
-            if (attackCount >= PowerAttackRequirement-1)
-            {
-                animator.SetTrigger(PowerAttackHash);
-
-                return;
-            }
-
-            // 일반 좌우 공격 예약
-            if (useRightAttack)
-                animator.SetTrigger(AttackRightHash);
-            else
-                animator.SetTrigger(AttackLeftHash);
-
-            useRightAttack = !useRightAttack;
-
-            return;
-        }
 
         isAttacking = true;
         hasEnteredAttackState = false;
@@ -259,8 +230,9 @@ public class PlayerController : MonoBehaviour
     
     private void TryDodgeLeft()
     {
-        if (isAttacking || isDodging)
+        if (isDodging)
             return;
+        CancelAttack();
 
         animator.SetBool(IsGuardingHash, false);
 
@@ -272,10 +244,10 @@ public class PlayerController : MonoBehaviour
 
     private void TryDodgeRight()
     {
-        if (isAttacking || isDodging)
+        if (isDodging)
             return;
 
-        ResetAttackChain();
+        CancelAttack();
 
         animator.SetBool(IsGuardingHash, false);
 
@@ -433,9 +405,30 @@ public class PlayerController : MonoBehaviour
     private void ResetAttackChain()
     {
         attackCount = 0;
+        attackQueued = false;
+        currentNormalAttackStateHash = 0;
+        powerAttackStarted = false;
+
+        animator.ResetTrigger(AttackRightHash);
+        animator.ResetTrigger(AttackLeftHash);
+        animator.ResetTrigger(PowerAttackHash);
     }
     private void RegisterNormalAttack()
     {
         attackCount++;
     }
+
+    private void CancelAttack()
+    {
+        attackQueued = false;
+        isAttacking = false;
+        hasEnteredAttackState = false;
+        currentNormalAttackStateHash = 0;
+        powerAttackStarted = false;
+
+        animator.ResetTrigger(AttackRightHash);
+        animator.ResetTrigger(AttackLeftHash);
+        animator.ResetTrigger(PowerAttackHash);
+    }
+    
 }

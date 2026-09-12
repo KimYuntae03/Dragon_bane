@@ -10,6 +10,12 @@ public class PlayerShield : MonoBehaviour
 
     [SerializeField] private Collider shieldCollider;
 
+    private static readonly int HittedHash =
+    Animator.StringToHash("Hitted");
+
+    private static readonly int Hitted2Hash =
+        Animator.StringToHash("Hitted2");
+
     private bool isGuarding = false;
     private Coroutine shieldCoroutine;
 
@@ -62,7 +68,14 @@ public class PlayerShield : MonoBehaviour
     {
         yield return new WaitForSeconds(shieldDelay);
 
-        if (isGuarding)
+        AnimatorStateInfo stateInfo =
+            animator.GetCurrentAnimatorStateInfo(0);
+
+        bool isHitState =
+            stateInfo.shortNameHash == HittedHash ||
+            stateInfo.shortNameHash == Hitted2Hash;
+
+        if (isGuarding && !isHitState)
         {
             if (shieldEffect != null)
                 shieldEffect.SetActive(true);

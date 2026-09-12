@@ -7997,6 +7997,7 @@ MonoBehaviour:
   playerModel: {fileID: 867550390}
   dodgeAngle: 20
   playerShield: {fileID: 1981826453}
+  hitReaction: {fileID: 1981826455}
 --- !u!114 &1981826450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8108,6 +8109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHitReaction
   animator: {fileID: 1227601495}
+  playerShield: {fileID: 1981826453}
 --- !u!4 &2074560848 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 485588, guid: eb58e8f2831a51f45a44a261e6710cdd, type: 3}
