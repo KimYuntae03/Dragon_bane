@@ -65,4 +65,22 @@ public class PlayerProjectile : MonoBehaviour
 
         Destroy(gameObject);
     }
+
+    //투사체 프리팹에 VFX장착 함수
+    public void SetVFX(GameObject vfxPrefab)
+    {
+        if (vfxPrefab == null)
+            return;
+
+        GameObject vfx =
+            Instantiate(
+                vfxPrefab,
+                transform.position,
+                transform.rotation,
+                transform
+            );
+
+        vfx.transform.localPosition = Vector3.zero;
+        vfx.transform.localRotation = Quaternion.identity;
+    }
 }

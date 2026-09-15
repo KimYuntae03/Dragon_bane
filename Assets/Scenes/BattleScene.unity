@@ -7896,6 +7896,7 @@ GameObject:
   - component: {fileID: 1981826449}
   - component: {fileID: 1981826450}
   - component: {fileID: 1981826451}
+  - component: {fileID: 1981826457}
   - component: {fileID: 1981826453}
   - component: {fileID: 1981826452}
   - component: {fileID: 1981826454}
@@ -8039,6 +8040,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 7085270043634550704, guid: 2b3e1605d1f811d47b98285c72584e7e, type: 3}
   projectileSpawnPoint: {fileID: 1689446919}
   dragon: {fileID: 2074560848}
+  gauntletManager: {fileID: 1981826457}
 --- !u!114 &1981826455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8069,6 +8071,21 @@ MonoBehaviour:
   dragon: {fileID: 2074560848}
   playerModel: {fileID: 867550390}
   dodgeAngle: 25
+--- !u!114 &1981826457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1981826447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c74f1538e80564083e17f36f536229, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GauntletManager
+  equippedGauntlet: 1
+  fireProjectileVFX: {fileID: 2972392977303283589, guid: 81f0ae904db924e4e9cbbc6ac2f031c1, type: 3}
+  lightningProjectileVFX: {fileID: 5627696518775099638, guid: b9006bf1a0b6b994bbe0d867a1c2f33a, type: 3}
 --- !u!4 &2074560848 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 485588, guid: eb58e8f2831a51f45a44a261e6710cdd, type: 3}
