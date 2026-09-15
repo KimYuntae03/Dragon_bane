@@ -29,11 +29,6 @@ public class PlayerDodge : MonoBehaviour
     private static readonly int DodgeRightStateHash =
         Animator.StringToHash("Dodge_Right");
 
-    private void Update()
-    {
-        CheckDodgeState();
-    }
-
     public void DodgeLeft()
     {
         if (isDodging)
@@ -66,25 +61,6 @@ public class PlayerDodge : MonoBehaviour
                 DodgeRightStateHash
             )
         );
-    }
-
-    private void CheckDodgeState()
-    {
-        if (!isDodging)
-            return;
-
-        AnimatorStateInfo stateInfo =
-            animator.GetCurrentAnimatorStateInfo(0);
-
-        bool isDodgeState =
-            stateInfo.shortNameHash == DodgeLeftStateHash ||
-            stateInfo.shortNameHash == DodgeRightStateHash;
-
-        if (!isDodgeState &&
-            !animator.IsInTransition(0))
-        {
-            isDodging = false;
-        }
     }
 
     private IEnumerator DodgeAroundDragon(
@@ -165,6 +141,8 @@ public class PlayerDodge : MonoBehaviour
         transform.position = targetPosition;
 
         FaceDragon();
+
+        isDodging = false;
     }
 
     private void FaceDragon()

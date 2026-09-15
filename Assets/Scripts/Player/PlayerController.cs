@@ -15,12 +15,9 @@ public class PlayerController : MonoBehaviour
     private bool useRightAttack = true;
     private bool isDead = false;
 
-    private int attackCount = 0;
-    private const int PowerAttackRequirement = 7;
     private int currentNormalAttackStateHash = 0;
-    private bool powerAttackStarted = false;
 
-    
+    private bool isBusy = false;
 
     private static readonly int AttackRightHash = Animator.StringToHash("AttackRight");
     private static readonly int AttackLeftHash = Animator.StringToHash("AttackLeft");
@@ -28,10 +25,6 @@ public class PlayerController : MonoBehaviour
     private static readonly int PunchLeftHash = Animator.StringToHash("Attackleft");
         
     private static readonly int DieHash = Animator.StringToHash("Die");
-
-    private static readonly int PowerAttackHash = Animator.StringToHash("PowerAttack");
-
-    private static readonly int PowerAttackStateHash = Animator.StringToHash("PowerAttack");
     
     private void Update()
     {
@@ -43,9 +36,18 @@ public class PlayerController : MonoBehaviour
         if (Keyboard.current == null)
             return;
 
-
         // 죽은 뒤 모든 조작 차단
         if (isDead)
+            return;
+        if (playerShield.IsGuarding &&
+            Keyboard.current.sKey.wasReleasedThisFrame)
+        {
+            playerShield.StopGuard();
+            EndAction();
+            return;
+        }
+
+        if (isBusy)
             return;
 
         if (Keyboard.current.aKey.wasPressedThisFrame)
@@ -56,27 +58,30 @@ public class PlayerController : MonoBehaviour
             if (!playerDodge.IsDodging)
             {
                 CancelAttack();
+                isBusy = true;
                 playerShield.StartGuard();
             }
         }
 
-        if (Keyboard.current.sKey.wasReleasedThisFrame)
-        {
-            playerShield.StopGuard();
-        }
-
         if (Keyboard.current.qKey.wasPressedThisFrame)
         {
-            CancelAttack();
-            playerShield.StopGuard();
-            playerDodge.DodgeLeft();
+            if (!playerDodge.IsDodging){
+                CancelAttack();
+                playerShield.StopGuard();
+                isBusy = true;
+                playerDodge.DodgeLeft();
+            }
         }
 
         if (Keyboard.current.eKey.wasPressedThisFrame)
         {
-            CancelAttack();
-            playerShield.StopGuard();
-            playerDodge.DodgeRight();
+            if (!playerDodge.IsDodging)
+            {
+                CancelAttack();
+                playerShield.StopGuard();
+                isBusy = true;
+                playerDodge.DodgeRight();
+            }
         }
     }
 
@@ -85,19 +90,9 @@ public class PlayerController : MonoBehaviour
         if (playerDodge.IsDodging || isAttacking)
             return;
 
+        isBusy = true;
         isAttacking = true;
         hasEnteredAttackState = false;
-
-        // 일반 공격 7회 누적 후
-        // 8번째 공격은 강화공격
-        if (attackCount >= PowerAttackRequirement)
-        {
-            animator.SetTrigger(PowerAttackHash);
-
-            ResetAttackChain();
-
-            return;
-        }
 
         // 일반 공격
         if (useRightAttack)
@@ -124,9 +119,6 @@ public class PlayerController : MonoBehaviour
         bool isNormalAttack =
             isRightAttack || isLeftAttack;
 
-        bool isPowerAttack =
-            stateInfo.shortNameHash == PowerAttackStateHash;
-
 
         // 일반 공격 State에 들어온 경우
         if (isNormalAttack)
@@ -142,9 +134,6 @@ public class PlayerController : MonoBehaviour
             // Right → Left 또는 Left → Right로 넘어온 경우
             else if (currentNormalAttackStateHash != stateInfo.shortNameHash)
             {
-                // 이전 공격 애니메이션이 끝났으므로 카운트 증가
-                RegisterNormalAttack();
-
                 currentNormalAttackStateHash =
                     stateInfo.shortNameHash;
             }
@@ -157,27 +146,8 @@ public class PlayerController : MonoBehaviour
         if (currentNormalAttackStateHash != 0 &&
             !animator.IsInTransition(0))
         {
-            // 마지막 일반 공격 완료
-            RegisterNormalAttack();
-
             currentNormalAttackStateHash = 0;
         }
-
-
-        // 강화공격도 공격 중 상태로 취급
-        if (isPowerAttack)
-        {
-            hasEnteredAttackState = true;
-
-            if (!powerAttackStarted)
-            {
-                powerAttackStarted = true;
-                ResetAttackChain();
-            }
-
-            return;
-        }
-
 
         // 모든 공격이 끝나 Idle 등으로 복귀
         if (isAttacking &&
@@ -187,7 +157,6 @@ public class PlayerController : MonoBehaviour
             Debug.Log("공격 상태 종료");
             isAttacking = false;
             hasEnteredAttackState = false;
-            powerAttackStarted = false;
         }
     }
 
@@ -209,24 +178,16 @@ public class PlayerController : MonoBehaviour
         // 남아 있는 공격/회피 Trigger 제거
         animator.ResetTrigger(AttackRightHash);
         animator.ResetTrigger(AttackLeftHash);
-        animator.ResetTrigger(PowerAttackHash);
 
         animator.SetTrigger(DieHash);
     }
 
     private void ResetAttackChain()
     {
-        attackCount = 0;
         currentNormalAttackStateHash = 0;
-        powerAttackStarted = false;
 
         animator.ResetTrigger(AttackRightHash);
         animator.ResetTrigger(AttackLeftHash);
-        animator.ResetTrigger(PowerAttackHash);
-    }
-    private void RegisterNormalAttack()
-    {
-        attackCount++;
     }
 
     private void CancelAttack()
@@ -234,11 +195,14 @@ public class PlayerController : MonoBehaviour
         isAttacking = false;
         hasEnteredAttackState = false;
         currentNormalAttackStateHash = 0;
-        powerAttackStarted = false;
 
         animator.ResetTrigger(AttackRightHash);
         animator.ResetTrigger(AttackLeftHash);
-        animator.ResetTrigger(PowerAttackHash);
+    }
+
+    public void EndAction()
+    {
+        isBusy = false;
     }
     
 }

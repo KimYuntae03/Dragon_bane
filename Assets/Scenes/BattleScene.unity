@@ -7497,6 +7497,7 @@ MonoBehaviour:
   playerShield: {fileID: 1981826453}
   playerAttack: {fileID: 1981826454}
   playerHitReaction: {fileID: 1981826455}
+  playerController: {fileID: 1981826449}
 --- !u!1 &1349809365
 GameObject:
   m_ObjectHideFlags: 0
@@ -8088,7 +8089,7 @@ MonoBehaviour:
   player: {fileID: 1981826448}
   rotationSpeed: 3
   animator: {fileID: 2074560850}
-  attackDelay: 6
+  attackDelay: 12
   flameEffect: {fileID: 636340078}
   chargeHitbox: {fileID: 1781505154}
   flameHitbox: {fileID: 1349809365}

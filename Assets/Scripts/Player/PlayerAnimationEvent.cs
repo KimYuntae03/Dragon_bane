@@ -6,6 +6,7 @@ public class PlayerAnimationEvents : MonoBehaviour
     [SerializeField] private PlayerAttack playerAttack;
 
     [SerializeField] private PlayerHitReaction playerHitReaction;
+    [SerializeField] private PlayerController playerController;
 
     public void StopGuard()
     {
@@ -29,5 +30,20 @@ public class PlayerAnimationEvents : MonoBehaviour
     {
         if (playerHitReaction != null)
             playerHitReaction.EndHitReaction();
+    }
+
+    public void EndAction()
+    {
+        if (playerController != null)
+            playerController.EndAction();
+    }
+
+    public void EndGuard()
+    {
+        if (playerShield != null)
+            playerShield.StopGuard();
+
+        if (playerController != null)
+            playerController.EndAction();
     }
 }
