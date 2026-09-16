@@ -8041,6 +8041,7 @@ MonoBehaviour:
   projectileSpawnPoint: {fileID: 1689446919}
   dragon: {fileID: 2074560848}
   gauntletManager: {fileID: 1981826457}
+  lightningDamage: 50
 --- !u!114 &1981826455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8083,7 +8084,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c74f1538e80564083e17f36f536229, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GauntletManager
-  equippedGauntlet: 1
+  equippedGauntlet: 0
   fireProjectileVFX: {fileID: 2972392977303283589, guid: 81f0ae904db924e4e9cbbc6ac2f031c1, type: 3}
   lightningProjectileVFX: {fileID: 5627696518775099638, guid: b9006bf1a0b6b994bbe0d867a1c2f33a, type: 3}
 --- !u!4 &2074560848 stripped
@@ -8106,7 +8107,7 @@ MonoBehaviour:
   player: {fileID: 1981826448}
   rotationSpeed: 3
   animator: {fileID: 2074560850}
-  attackDelay: 12
+  attackDelay: 7
   flameEffect: {fileID: 636340078}
   chargeHitbox: {fileID: 1781505154}
   flameHitbox: {fileID: 1349809365}

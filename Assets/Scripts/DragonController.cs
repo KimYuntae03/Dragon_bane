@@ -114,7 +114,15 @@ public class DragonController : MonoBehaviour
             return;
 
         isDead = true;
+        isAttacking = false;
 
+        StopFlame();
+        if (chargeHitbox != null)
+            chargeHitbox.SetActive(false);
+
+        if (flameHitbox != null)
+            flameHitbox.SetActive(false);
+            
         animator.ResetTrigger(ClawAttackHash);
         animator.ResetTrigger(FlameAttackHash);
 
