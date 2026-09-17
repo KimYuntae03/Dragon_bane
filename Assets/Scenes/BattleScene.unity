@@ -8084,8 +8084,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c74f1538e80564083e17f36f536229, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GauntletManager
-  equippedGauntlet: 0
+  equippedGauntlet: 2
   fireProjectileVFX: {fileID: 2972392977303283589, guid: 81f0ae904db924e4e9cbbc6ac2f031c1, type: 3}
+  windProjectileVFX: {fileID: 7966731087305637596, guid: 460babe280fe4aa41adc3fefd46f0c0b, type: 3}
   lightningProjectileVFX: {fileID: 5627696518775099638, guid: b9006bf1a0b6b994bbe0d867a1c2f33a, type: 3}
 --- !u!4 &2074560848 stripped
 Transform:

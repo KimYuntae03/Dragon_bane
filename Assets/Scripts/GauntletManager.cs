@@ -5,15 +5,17 @@ public class GauntletManager : MonoBehaviour
     public enum GauntletType
     {
         Fire,
-        Lightning
+        Lightning,
+        Wind
     }
 
     [Header("Equipped Gauntlet")]
     [SerializeField] private GauntletType equippedGauntlet;
 
     [Header("Projectile VFX")]
-    [SerializeField] private GameObject fireProjectileVFX;
-    [SerializeField] private GameObject lightningProjectileVFX;
+    [SerializeField] private GameObject fireProjectileVFX;//불 투사체 필드
+    [SerializeField] private GameObject windProjectileVFX;//바람 투사체 필드
+    [SerializeField] private GameObject lightningProjectileVFX;//번개공격필드
 
     public GauntletType EquippedGauntlet => equippedGauntlet;
 
@@ -23,6 +25,9 @@ public class GauntletManager : MonoBehaviour
         {
             case GauntletType.Fire:
                 return fireProjectileVFX;
+
+            case GauntletType.Wind:
+                return windProjectileVFX;
 
             case GauntletType.Lightning:
                 return lightningProjectileVFX;
