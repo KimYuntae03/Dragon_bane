@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private PlayerDodge playerDodge;
 
+    [SerializeField] private PlayerHealth playerHealth;
+
+    [SerializeField] private PlayerHitReaction playerHitReaction;
+
     private bool isAttacking = false;
     private bool hasEnteredAttackState = false;
     private bool useRightAttack = true;
@@ -81,6 +85,17 @@ public class PlayerController : MonoBehaviour
                 playerShield.StopGuard();
                 isBusy = true;
                 playerDodge.DodgeRight();
+            }
+        }
+
+        if (Keyboard.current.hKey.wasPressedThisFrame)//H키 누르면 힐(임시)
+        {
+            //구르기, 쉴드, 피격중에는 힐 불가
+            if (!playerDodge.IsDodging &&
+                !playerShield.IsGuarding &&
+                !playerHitReaction.IsHitReacting)
+            {
+                playerHealth.Heal(20f);
             }
         }
     }

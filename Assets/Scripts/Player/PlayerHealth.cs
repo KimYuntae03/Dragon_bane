@@ -17,6 +17,11 @@ public class PlayerHealth : MonoBehaviour
     //플레이어 피격 시 애니메이션 호출 변수
     [SerializeField] private PlayerHitReaction hitReaction;
 
+    //회복포션 사용시 터트릴 이펙트 
+    [SerializeField] private GameObject healVFX;
+    //힐 이펙트 적용 위치
+    [SerializeField] private Transform healEffectPoint;
+
     private float currentHealth;
     private bool isDead = false;
     public enum HitType
@@ -72,6 +77,32 @@ public class PlayerHealth : MonoBehaviour
         if (playerController != null)
         {
             playerController.Die();
+        }
+    }
+
+    public void Heal(float amount)
+    {
+        if (isDead)
+            return;
+        
+        if (currentHealth >= maxHealth)
+            return;
+
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+
+        UpdateHealthUI();
+
+        if (healVFX != null && healEffectPoint != null) //힐 이펙트 발동
+        {
+            GameObject effect =
+                Instantiate(
+                    healVFX,
+                    healEffectPoint.position,
+                    Quaternion.identity
+                );
+
+            Destroy(effect, 2f);
         }
     }
 }

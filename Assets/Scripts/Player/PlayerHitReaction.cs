@@ -7,14 +7,13 @@ public class PlayerHitReaction : MonoBehaviour
     [SerializeField] private PlayerShield playerShield;
 
     private bool isHitReacting = false;
+    public bool IsHitReacting => isHitReacting;
 
     private static readonly int HitClawHash =
         Animator.StringToHash("HitClaw");
 
     private static readonly int HitFlameHash =
         Animator.StringToHash("HitFlame");
-
-    public bool IsHitReacting => isHitReacting;
 
     public void PlayClawHitReaction()
     {
