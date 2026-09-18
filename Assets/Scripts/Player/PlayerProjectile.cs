@@ -49,6 +49,16 @@ public class PlayerProjectile : MonoBehaviour
 
         moveDirection.Normalize();
 
+        //투사체가 현재 이동 방향을 바라보도록 회전
+        Vector3 lookDirection = moveDirection;
+        lookDirection.y = 0f;
+
+        if (lookDirection.sqrMagnitude > 0.001f)
+        {
+            transform.rotation =
+                Quaternion.LookRotation(lookDirection);
+        }
+
         transform.position +=
             moveDirection * speed * Time.deltaTime;
     }
