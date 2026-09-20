@@ -25,7 +25,7 @@ public class PlayerAttack : MonoBehaviour
 
         //번개 속성 공격(투사체 아니라 먼저 필터)
          if (gauntletManager.EquippedGauntlet ==
-                GauntletManager.GauntletType.Lightning)
+                ElementType.Lightning)
             {
                 GameObject lightningVFX =
                     gauntletManager.GetProjectileVFX();
@@ -58,7 +58,7 @@ public class PlayerAttack : MonoBehaviour
                     dragonHealth = dragon.GetComponent<DragonHealth>();
 
                 if (dragonHealth != null)
-                    dragonHealth.TakeDamage(lightningDamage);
+                    dragonHealth.TakeDamage(lightningDamage,ElementType.Lightning);
 
                 return;
             }
@@ -80,7 +80,7 @@ public class PlayerAttack : MonoBehaviour
 
         if (projectile != null)
         {
-            projectile.Initialize(dragon, curveRight);
+            projectile.Initialize(dragon, curveRight,gauntletManager.EquippedGauntlet);
 
             GameObject projectileVFX = gauntletManager.GetProjectileVFX();
 

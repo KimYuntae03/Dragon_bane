@@ -15,6 +15,9 @@ public class DragonHealth : MonoBehaviour
     [Header("Controller")]
     [SerializeField] private DragonController dragonController;
 
+    [SerializeField] private ElementType dragonElement;//드래곤 속성
+    public ElementType DragonElement => dragonElement;
+
     private float currentHealth;
     private bool isDead = false;
 
@@ -24,12 +27,20 @@ public class DragonHealth : MonoBehaviour
         UpdateHealthUI();
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, ElementType attackElement)
     {
         if (isDead)
             return;
 
-        currentHealth -= damage;
+        float multiplier =
+            ElementManager.GetDamageMultiplier(
+                dragonElement,
+                attackElement
+            );
+
+        float finalDamage = damage * multiplier;
+
+        currentHealth -= finalDamage;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
 
         UpdateHealthUI();

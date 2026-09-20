@@ -12,15 +12,17 @@ public class PlayerProjectile : MonoBehaviour
 
     [Header("Life Time")]
     [SerializeField] private float lifeTime = 5f;
+    private ElementType attackElement;
 
     private Transform target;
 
     private Vector3 curveDirection;
     private float elapsedTime = 0f;
 
-    public void Initialize(Transform targetTransform, bool curveRight)
+    public void Initialize(Transform targetTransform, bool curveRight,ElementType element)
     {
         target = targetTransform;
+        attackElement = element;
 
         // 좌/우 공격에 따라 바깥으로 휘는 방향 결정
         curveDirection =
@@ -71,7 +73,7 @@ public class PlayerProjectile : MonoBehaviour
         if (dragonHealth == null)
             return;
 
-        dragonHealth.TakeDamage(damage);
+        dragonHealth.TakeDamage(damage,attackElement);
 
         Destroy(gameObject);
     }

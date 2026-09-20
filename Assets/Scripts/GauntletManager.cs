@@ -2,34 +2,27 @@ using UnityEngine;
 
 public class GauntletManager : MonoBehaviour
 {
-    public enum GauntletType
-    {
-        Fire,
-        Lightning,
-        Wind
-    }
-
     [Header("Equipped Gauntlet")]
-    [SerializeField] private GauntletType equippedGauntlet;
+    [SerializeField] private ElementType equippedGauntlet;
 
     [Header("Projectile VFX")]
-    [SerializeField] private GameObject fireProjectileVFX;//불 투사체 필드
-    [SerializeField] private GameObject windProjectileVFX;//바람 투사체 필드
-    [SerializeField] private GameObject lightningProjectileVFX;//번개공격필드
+    [SerializeField] private GameObject fireProjectileVFX;
+    [SerializeField] private GameObject windProjectileVFX;
+    [SerializeField] private GameObject lightningProjectileVFX;
 
-    public GauntletType EquippedGauntlet => equippedGauntlet;
+    public ElementType EquippedGauntlet => equippedGauntlet;
 
     public GameObject GetProjectileVFX()
     {
         switch (equippedGauntlet)
         {
-            case GauntletType.Fire:
+            case ElementType.Fire:
                 return fireProjectileVFX;
 
-            case GauntletType.Wind:
+            case ElementType.Wind:
                 return windProjectileVFX;
 
-            case GauntletType.Lightning:
+            case ElementType.Lightning:
                 return lightningProjectileVFX;
 
             default:
@@ -37,8 +30,8 @@ public class GauntletManager : MonoBehaviour
         }
     }
 
-    public void EquipGauntlet(GauntletType gauntletType)
+    public void EquipGauntlet(ElementType elementType)
     {
-        equippedGauntlet = gauntletType;
+        equippedGauntlet = elementType;
     }
 }

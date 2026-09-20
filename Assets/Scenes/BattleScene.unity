@@ -8078,7 +8078,7 @@ MonoBehaviour:
   projectileSpawnPoint: {fileID: 1689446919}
   dragon: {fileID: 2074560848}
   gauntletManager: {fileID: 1981826457}
-  lightningDamage: 50
+  lightningDamage: 10
 --- !u!114 &1981826455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8308,6 +8308,7 @@ MonoBehaviour:
   hpFill: {fileID: 479564165}
   dragonHPText: {fileID: 2000722252}
   dragonController: {fileID: 2074560849}
+  dragonElement: 0
 --- !u!135 &2074560852
 SphereCollider:
   m_ObjectHideFlags: 0
