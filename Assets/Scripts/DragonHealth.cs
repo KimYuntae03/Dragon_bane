@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DragonHealth : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class DragonHealth : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private Image hpFill;
+
+    [SerializeField] private TMP_Text dragonHPText;
 
     [Header("Controller")]
     [SerializeField] private DragonController dragonController;
@@ -37,10 +40,16 @@ public class DragonHealth : MonoBehaviour
 
     private void UpdateHealthUI()
     {
-        if (hpFill != null)
+        if (hpFill != null) //HPFill업데이트
         {
             hpFill.fillAmount =
                 currentHealth / maxHealth;
+        }
+
+        if (dragonHPText != null) //HPText업데이트
+        {
+            dragonHPText.text =
+                Mathf.CeilToInt(currentHealth).ToString();
         }
     }
 

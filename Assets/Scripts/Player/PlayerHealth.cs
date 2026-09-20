@@ -9,7 +9,7 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private Image hpFill;
-    [SerializeField] private TMP_Text hpText;
+    [SerializeField] private TMP_Text playerHPText;
 
     [Header("Controller")]
     [SerializeField] private PlayerController playerController;
@@ -62,10 +62,16 @@ public class PlayerHealth : MonoBehaviour
 
     private void UpdateHealthUI()
     {
-        if (hpFill == null)
-            return;
+        if (hpFill != null)
+        {
+            hpFill.fillAmount = currentHealth / maxHealth;
+        }
 
-        hpFill.fillAmount = currentHealth / maxHealth;
+        if (playerHPText != null)
+        {
+            playerHPText.text =
+                Mathf.CeilToInt(currentHealth).ToString();
+        }
     }
 
     private void Die()
