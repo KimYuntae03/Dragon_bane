@@ -328,7 +328,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.9490196}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.85882354}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8645,7 +8645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c74f1538e80564083e17f36f536229, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GauntletManager
-  equippedGauntlet: 1
+  equippedGauntlet: 2
   fireProjectileVFX: {fileID: 2972392977303283589, guid: 81f0ae904db924e4e9cbbc6ac2f031c1, type: 3}
   windProjectileVFX: {fileID: 7966731087305637596, guid: 460babe280fe4aa41adc3fefd46f0c0b, type: 3}
   lightningProjectileVFX: {fileID: 5627696518775099638, guid: b9006bf1a0b6b994bbe0d867a1c2f33a, type: 3}

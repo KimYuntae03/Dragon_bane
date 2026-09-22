@@ -6,6 +6,11 @@ public class ElementManager : MonoBehaviour
         ElementType dragonElement,
         ElementType attackElement)
     {
+        if (dragonElement == attackElement)
+        {
+            return 0.5f;
+        }
+        
         if (dragonElement == ElementType.Wind &&
             attackElement == ElementType.Fire)
         {
