@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour
 
     private bool isBusy = false;
 
+    private bool battleActive = false;//전투 활성화,비활성화 변수
+
     private static readonly int AttackRightHash = Animator.StringToHash("AttackRight");
     private static readonly int AttackLeftHash = Animator.StringToHash("AttackLeft");
     private static readonly int PunchRightHash = Animator.StringToHash("Attackright");
@@ -32,6 +34,9 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
     {
+        if (!battleActive)//전투시작 전이라면 입력 차단
+            return;
+
         if (!isDead)
         {
             CheckAttackState();
@@ -218,6 +223,10 @@ public class PlayerController : MonoBehaviour
     public void EndAction()
     {
         isBusy = false;
+    }
+    public void SetBattleActive(bool active)
+    {
+        battleActive = active;
     }
     
 }

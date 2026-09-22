@@ -26,6 +26,8 @@ public class DragonController : MonoBehaviour
 
     private bool isDead = false;
     private bool isAttacking = false;
+    private bool battleActive = false;//전투 활성화,비활성화 변수
+    private Coroutine attackRoutine;
 
     private static readonly int ClawAttackHash =
         Animator.StringToHash("ClawAttack");
@@ -42,9 +44,11 @@ public class DragonController : MonoBehaviour
         StartCoroutine(AttackRoutine());
     }
     
-
     private void Update()
     {
+        if (!battleActive)
+            return;
+
         if (isDead)
             return;
 
@@ -56,15 +60,16 @@ public class DragonController : MonoBehaviour
 
     private IEnumerator AttackRoutine()
     {
-        while (!isDead)
+        while (!isDead && battleActive)
         {
             yield return new WaitForSeconds(attackDelay);
 
-            if (isDead)
-                yield break;
+            if (isDead || !battleActive)
+                break;
 
             RandomAttack();
         }
+        attackRoutine = null;
     }
 
     private void RandomAttack()
@@ -176,5 +181,25 @@ public class DragonController : MonoBehaviour
     public void EndAttack()
     {
         isAttacking = false;
+    }
+
+    public void SetBattleActive(bool active)
+    {
+        battleActive = active;
+        if (battleActive)
+        {
+            if (attackRoutine == null && !isDead)
+            {
+                attackRoutine = StartCoroutine(AttackRoutine());
+            }
+        }
+        else
+        {
+            if (attackRoutine != null)
+            {
+                StopCoroutine(attackRoutine);
+                attackRoutine = null;
+            }
+        }
     }
 }
