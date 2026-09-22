@@ -13,8 +13,13 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private float followSpeed = 12f;
     [SerializeField] private float rotationSpeed = 10f;
 
+    private bool battleActive = false;
+
     private void LateUpdate()
     {
+        if (!battleActive)//게임 시작 전에는 비활성화
+            return;
+
         if (player == null || dragon == null)
             return;
 
@@ -56,5 +61,10 @@ public class CameraFollow : MonoBehaviour
                 rotationSpeed * Time.deltaTime
             );
         }
+    }
+    
+    public void SetBattleActive(bool active)
+    {
+        battleActive = active;
     }
 }

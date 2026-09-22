@@ -366,6 +366,7 @@ GameObject:
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
   - component: {fileID: 330585548}
+  - component: {fileID: 330585549}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -509,6 +510,21 @@ MonoBehaviour:
   height: 2
   followSpeed: 12
   rotationSpeed: 8
+--- !u!114 &330585549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e923c59798ab31741a87997bb59d49a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleIntroCamera
+  dragon: {fileID: 2074560848}
+  orbitSpeed: 8
+  lookHeight: 4
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -8268,6 +8284,8 @@ MonoBehaviour:
   playerController: {fileID: 1981826449}
   dragonController: {fileID: 2074560849}
   bottomButtonUI: {fileID: 1145553234}
+  battleIntroCamera: {fileID: 330585549}
+  cameraFollow: {fileID: 330585548}
 --- !u!4 &1701915372
 Transform:
   m_ObjectHideFlags: 0
