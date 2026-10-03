@@ -22,6 +22,9 @@ public class PlayerInventoryManager : MonoBehaviour
     [Header("Other Items")]
     [SerializeField] private List<string> ownedItems
         = new List<string>();                           // 추후 일반 아이템용
+    [Header("Owned Equipment")]
+    [SerializeField] private List<string> ownedEquipmentIds //장비 보유 데이터
+        = new List<string>();
 
     // 외부에서 현재 데이터 확인용
     public int Gold => gold;
@@ -44,5 +47,17 @@ public class PlayerInventoryManager : MonoBehaviour
 
         // Scene이 변경되어도 유지
         DontDestroyOnLoad(gameObject);
+    }
+    public bool HasEquipment(string itemId)
+    {
+        return ownedEquipmentIds.Contains(itemId);
+    }
+
+    public void AddEquipment(string itemId)
+    {
+        if (ownedEquipmentIds.Contains(itemId))
+            return;
+
+        ownedEquipmentIds.Add(itemId);
     }
 }
