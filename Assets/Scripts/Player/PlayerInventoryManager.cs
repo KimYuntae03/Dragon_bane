@@ -60,4 +60,20 @@ public class PlayerInventoryManager : MonoBehaviour
 
         ownedEquipmentIds.Add(itemId);
     }
+
+    // 골드가 충분한지 확인
+    public bool HasEnoughGold(int amount)
+    {
+        return gold >= amount;
+    }
+
+    // 골드 사용
+    public bool SpendGold(int amount)
+    {
+        if (gold < amount)
+            return false;
+
+        gold -= amount;
+        return true;
+    }
 }

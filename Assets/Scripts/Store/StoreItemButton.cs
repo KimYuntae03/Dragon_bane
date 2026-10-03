@@ -11,6 +11,9 @@ public class StoreItemButton : MonoBehaviour
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private Button button;
 
+    //구매창을 열 수 있도록 StorePurchaseManager.cs참조
+    [SerializeField] private StorePurchaseManager purchaseManager;
+
     private void Start()
     {
         UpdateItemUI();
@@ -48,5 +51,13 @@ public class StoreItemButton : MonoBehaviour
             if (button != null)
                 button.interactable = !isOwned;
         }
+    }
+
+    public void OnClickItem()
+    {
+        if (itemData == null || purchaseManager == null)
+            return;
+
+        purchaseManager.OpenPurchasePopup(itemData);
     }
 }
