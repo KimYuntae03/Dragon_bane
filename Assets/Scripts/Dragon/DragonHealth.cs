@@ -18,6 +18,9 @@ public class DragonHealth : MonoBehaviour
     [SerializeField] private ElementType dragonElement;//드래곤 속성
     public ElementType DragonElement => dragonElement;
 
+    //사망 & 클리어 시 UI를 실행할 오브젝트 연결
+    [SerializeField] private BattleResultDirector battleResultDirector;
+
     private float currentHealth;
     private bool isDead = false;
 
@@ -72,6 +75,9 @@ public class DragonHealth : MonoBehaviour
         isDead = true;
 
         if (dragonController != null)
+
             dragonController.Die();
+        if (battleResultDirector != null)
+            battleResultDirector.PlayDragonDeathCinematic();
     }
 }
