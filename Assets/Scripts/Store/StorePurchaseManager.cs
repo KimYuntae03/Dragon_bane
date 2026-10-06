@@ -72,6 +72,18 @@ public class StorePurchaseManager : MonoBehaviour
                 selectedItem.ItemId);
         }
 
+        //구매 완료 후 상점 UI 갱신
+        StoreItemButton[] itemButtons =
+            FindObjectsByType<StoreItemButton>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            );
+
+        foreach (StoreItemButton itemButton in itemButtons)
+        {
+            itemButton.UpdateItemUI();
+        }
+
         purchasePopup.SetActive(false);
 
         // 상단 골드 UI 갱신

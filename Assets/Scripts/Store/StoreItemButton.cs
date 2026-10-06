@@ -10,6 +10,8 @@ public class StoreItemButton : MonoBehaviour
     [Header("UI")]
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private Button button;
+    [SerializeField] private GameObject goldIcon;
+    [SerializeField] private GameObject ownedCheckIcon;
 
     //구매창을 열 수 있도록 StorePurchaseManager.cs참조
     [SerializeField] private StorePurchaseManager purchaseManager;
@@ -19,7 +21,7 @@ public class StoreItemButton : MonoBehaviour
         UpdateItemUI();
     }
 
-    private void UpdateItemUI()
+    public void UpdateItemUI()
     {
         if (itemData == null)
             return;
@@ -47,9 +49,34 @@ public class StoreItemButton : MonoBehaviour
                     itemData.ItemId
                 );
 
-            // 이미 보유한 장비라면 클릭 불가능
-            if (button != null)
-                button.interactable = !isOwned;
+            if (isOwned) //소유 중이라면 가격 대신 OWNED표시
+            {
+                if (priceText != null)
+                    priceText.text = "OWNED";
+                
+                if (goldIcon != null)
+                    goldIcon.SetActive(false);
+
+                if (ownedCheckIcon != null)
+                    ownedCheckIcon.SetActive(true);
+
+                if (button != null) //이미 소유중이라면 클릭 안되게 막기
+                    button.interactable = false;
+            }
+            else
+            {
+                if (priceText != null)
+                    priceText.text = itemData.Price.ToString();
+                
+                if (goldIcon != null)
+                    goldIcon.SetActive(true);
+
+                if (ownedCheckIcon != null)
+                    ownedCheckIcon.SetActive(false);
+
+                if (button != null)
+                    button.interactable = true;
+            }
         }
     }
 
