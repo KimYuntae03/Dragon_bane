@@ -19,9 +19,6 @@ public class BattleResultDirector : MonoBehaviour
     [SerializeField] private float letterboxTargetHeight = 120f;
     [SerializeField] private float letterboxSpeed = 400f;
 
-    [Header("Result UI")]
-    [SerializeField] private GameObject victoryUI;
-
     [Header("Letterbox Exit")]
     [SerializeField] private float letterboxExitDistance = 160f;
     [SerializeField] private float letterboxExitSpeed = 300f;
@@ -34,7 +31,18 @@ public class BattleResultDirector : MonoBehaviour
     [SerializeField] private float cameraRotateSpeed = 6f;
     [SerializeField] private float cinematicDuration = 2.5f;
 
+    [Header("Victory UI")]
+    [SerializeField] private GameObject victoryUI;
+    [SerializeField] private CanvasGroup victoryCanvasGroup;
+    [SerializeField] private float victoryFadeDuration = 1.0f;
 
+    [Header("Reward UI")]
+    [SerializeField] private CanvasGroup expReward;
+    [SerializeField] private CanvasGroup goldReward;
+    [SerializeField] private CanvasGroup upgradeStoneReward;
+
+    [SerializeField] private float rewardFadeDuration = 0.35f;
+    [SerializeField] private float rewardInterval = 0.15f;
 
     private bool isPlayingCinematic = false;
 
@@ -78,12 +86,10 @@ public class BattleResultDirector : MonoBehaviour
             yield return null;
         }
 
+        //VictoryUI띄우기
+        StartCoroutine(ShowVictoryUI());
         // 레터박스가 위/아래로 자라지도록 함
         yield return StartCoroutine(HideLetterbox());
-
-        // 레터박스가 완전히 사라진 뒤 Victory UI 표시
-        if (victoryUI != null)
-            victoryUI.SetActive(true);
 
         // 여기서 승리 UI 띄우기
         Debug.Log("드래곤 처치 연출 종료 -> Victory UI 표시");
@@ -186,5 +192,77 @@ public class BattleResultDirector : MonoBehaviour
         // 완전히 빠진 뒤 LetterboxUI 자체 비활성화
         if (letterboxUI != null)
             letterboxUI.SetActive(false);
+    }
+    private IEnumerator ShowVictoryUI()
+    {
+        if (victoryUI == null || victoryCanvasGroup == null)
+            yield break;
+
+        victoryUI.SetActive(true);
+
+        victoryCanvasGroup.alpha = 0f;
+        victoryCanvasGroup.interactable = false;
+        victoryCanvasGroup.blocksRaycasts = false;
+
+        float elapsed = 0f;
+
+        while (elapsed < victoryFadeDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            victoryCanvasGroup.alpha = Mathf.Lerp(
+                0f,
+                1f,
+                elapsed / victoryFadeDuration
+            );
+
+            yield return null;
+        }
+
+        victoryCanvasGroup.alpha = 1f;
+        victoryCanvasGroup.interactable = true;
+        victoryCanvasGroup.blocksRaycasts = true;
+        yield return StartCoroutine(ShowRewardsSequentially());
+    }
+
+    private IEnumerator ShowRewardsSequentially() //보상 효과
+    {
+        if (expReward != null)
+        {
+            yield return StartCoroutine(FadeInReward(expReward));
+            yield return new WaitForSeconds(rewardInterval);
+        }
+
+        if (goldReward != null)
+        {
+            yield return StartCoroutine(FadeInReward(goldReward));
+            yield return new WaitForSeconds(rewardInterval);
+        }
+
+        if (upgradeStoneReward != null)
+        {
+            yield return StartCoroutine(FadeInReward(upgradeStoneReward));
+        }
+    }
+    private IEnumerator FadeInReward(CanvasGroup reward)//공통 페이드 함수
+    {
+        reward.alpha = 0f;
+
+        float elapsed = 0f;
+
+        while (elapsed < rewardFadeDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            reward.alpha = Mathf.Lerp(
+                0f,
+                1f,
+                elapsed / rewardFadeDuration
+            );
+
+            yield return null;
+        }
+
+        reward.alpha = 1f;
     }
 }
