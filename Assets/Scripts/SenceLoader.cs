@@ -18,4 +18,8 @@ public class SceneLoader : MonoBehaviour
     {
         SceneManager.LoadScene("BattleScene");
     }
+    public void ReturnToMainMap()
+    {
+        SceneManager.LoadScene("Mainmap");
+    }
 }

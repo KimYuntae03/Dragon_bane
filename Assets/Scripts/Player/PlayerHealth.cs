@@ -22,6 +22,9 @@ public class PlayerHealth : MonoBehaviour
     //힐 이펙트 적용 위치
     [SerializeField] private Transform healEffectPoint;
 
+    //플레이어 사망시 패배효과 참조할 변수
+    [SerializeField] private DefeatResultDirector defeatResultDirector;
+
     private float currentHealth;
     private bool isDead = false;
     public enum HitType
@@ -80,9 +83,16 @@ public class PlayerHealth : MonoBehaviour
             return;
 
         isDead = true;
+
+        // 플레이어 사망 애니메이션
         if (playerController != null)
         {
             playerController.Die();
+        }
+        
+        if (defeatResultDirector != null)//패배 연출 시작
+        {
+            defeatResultDirector.PlayDefeatCinematic();
         }
     }
 
