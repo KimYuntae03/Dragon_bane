@@ -7156,13 +7156,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db7e435cfec7d504596d3949e4b93968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventoryManager
-  gold: 1000
+  gold: 10000
   upgradeStone: 10
-  healthPotion: 3
-  ownedGauntlets: 00000000
+  ownedGauntletIds: []
+  ownedRobeIds: []
+  ownedItemIds: []
+  ownedPetIds: []
   equippedGauntlet: 0
-  ownedItems: []
-  ownedEquipmentIds: []
+  equippedRobeId: 
+  equippedPetId: 
+  healthPotion: 3
 --- !u!4 &850382330
 Transform:
   m_ObjectHideFlags: 0

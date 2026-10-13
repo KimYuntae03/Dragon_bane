@@ -15,4 +15,5 @@ MonoBehaviour:
   itemId: Wind Robe
   itemName: Wind Robe
   itemType: 1
+  itemIcon: {fileID: 21300000, guid: 5d3ba45f072e2f84b845d86a540c6bf4, type: 3}
   price: 1000

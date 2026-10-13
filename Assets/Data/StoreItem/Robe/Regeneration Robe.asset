@@ -15,4 +15,5 @@ MonoBehaviour:
   itemId: Regeneration Robe
   itemName: Regeneration Robe
   itemType: 1
+  itemIcon: {fileID: 21300000, guid: 4b412ed62acfb5743b6bccfe90177bc6, type: 3}
   price: 1500

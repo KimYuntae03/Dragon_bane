@@ -15,4 +15,5 @@ MonoBehaviour:
   itemId: Flame Robe
   itemName: Flame Robe
   itemType: 1
+  itemIcon: {fileID: 21300000, guid: a0cb3f261b7bd814fa38595c28928dda, type: 3}
   price: 1000

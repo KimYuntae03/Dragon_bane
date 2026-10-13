@@ -15,4 +15,5 @@ MonoBehaviour:
   itemId: Thunder Robe
   itemName: Thunder Robe
   itemType: 1
+  itemIcon: {fileID: 21300000, guid: 183dad4ac06370a498460ad55fbc08b5, type: 3}
   price: 1000

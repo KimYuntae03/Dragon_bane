@@ -14,5 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StoreItemData
   itemId: Fire Gauntlet
   itemName: Fire Gauntlet
+  itemDescription: This is a fire-element gauntlet. Strong against Wind-element dragons.
   itemType: 0
+  itemIcon: {fileID: 21300000, guid: 58e2d036ef667f0468f1558bbf487751, type: 3}
   price: 1000
+  damage: 20
+  upgradeLevel: 1
+  quantity: 0
+  defense: 0
+  healAmount: 0

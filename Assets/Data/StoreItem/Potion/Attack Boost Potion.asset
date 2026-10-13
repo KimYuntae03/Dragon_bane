@@ -15,4 +15,5 @@ MonoBehaviour:
   itemId: Attack Boost Potion
   itemName: Attack Boost Potion
   itemType: 2
+  itemIcon: {fileID: 21300000, guid: 1ec4322355a35c84db11c3ba71043db1, type: 3}
   price: 1000

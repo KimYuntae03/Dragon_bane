@@ -15,4 +15,5 @@ MonoBehaviour:
   itemId: Medium Health Potion
   itemName: Medium Health Potion
   itemType: 2
+  itemIcon: {fileID: 21300000, guid: 4e7d60bb26b8f66478663f81db095420, type: 3}
   price: 200

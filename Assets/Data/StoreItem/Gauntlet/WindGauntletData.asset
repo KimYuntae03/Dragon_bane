@@ -15,4 +15,5 @@ MonoBehaviour:
   itemId: Wind Gauntlet
   itemName: Wind Gauntlet
   itemType: 0
+  itemIcon: {fileID: 21300000, guid: 6ee70527d6d15364ea1a50d02ba25be8, type: 3}
   price: 1000

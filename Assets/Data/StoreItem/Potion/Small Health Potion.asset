@@ -15,4 +15,5 @@ MonoBehaviour:
   itemId: Small Health Potion
   itemName: Small Health Potion
   itemType: 2
+  itemIcon: {fileID: 21300000, guid: 2f87f41040dd9ef4db8fcb1c6ca080fa, type: 3}
   price: 100
