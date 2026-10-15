@@ -38,6 +38,11 @@ public class StoreItemData : ScriptableObject
     [SerializeField] private int defense;
     [SerializeField] private int healAmount;
 
+    [Header("Gauntlet Element")]//건틀릿 속성
+    [SerializeField] private ElementType elementType;
+
+    public ElementType ElementType => elementType;
+
     public string ItemId => itemId;
     public string ItemName => itemName;
     public string ItemDescription => itemDescription;

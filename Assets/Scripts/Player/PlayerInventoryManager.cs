@@ -311,4 +311,87 @@ public class PlayerInventoryManager : MonoBehaviour
         gold -= amount;
         return true;
     }
+
+    // 건틀릿 장착
+    public void EquipGauntlet(
+        string itemId,
+        ElementType elementType)
+    {
+        // 보유하지 않은 건틀릿은 장착 불가
+        if (!HasGauntlet(itemId))
+            return;
+
+        equippedGauntlet = elementType;
+    }
+
+
+    // 로브 장착
+    public void EquipRobe(string itemId)
+    {
+        // 보유하지 않은 로브는 장착 불가
+        if (!HasRobe(itemId))
+            return;
+
+        equippedRobeId = itemId;
+    }
+
+    public void EquipPet(string itemId)
+    {
+        if (!HasPet(itemId))
+            return;
+
+        equippedPetId = itemId;
+    }
+
+    // 강화에 필요한 강화석이 충분한지 확인
+    public bool HasEnoughUpgradeStone(int amount)
+    {
+        return upgradeStone >= amount;
+    }
+
+
+    // 강화석 사용
+    public bool SpendUpgradeStone(int amount)
+    {
+        if (upgradeStone < amount)
+            return false;
+
+        upgradeStone -= amount;
+        return true;
+    }
+    public bool UpgradeGauntlet(string itemId)
+    {
+        EquipmentInventoryData data =
+            ownedGauntlets.Find(
+                item => item.itemId == itemId
+            );
+
+        if (data == null)
+            return false;
+
+        // 강화 레벨 최대 +17
+        if (data.upgradeLevel >= 17)
+            return false;
+
+        data.upgradeLevel++;
+
+        return true;
+    }
+
+    public int GetGauntletDamage(StoreItemData itemData)
+    {
+        if (itemData == null)
+            return 0;
+
+        int level =
+            GetGauntletUpgradeLevel(
+                itemData.ItemId
+            );
+
+        float finalDamage =
+            itemData.Damage *
+            (1f + level * 0.2f);
+
+        return Mathf.RoundToInt(finalDamage);
+    }
 }

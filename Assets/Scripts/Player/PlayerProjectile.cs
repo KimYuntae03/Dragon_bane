@@ -7,9 +7,6 @@ public class PlayerProjectile : MonoBehaviour
     [SerializeField] private float curveStrength = 4f;
     [SerializeField] private float homingStrength = 8f;
 
-    [Header("Damage")]
-    [SerializeField] private float damage = 10f;
-
     [Header("Life Time")]
     [SerializeField] private float lifeTime = 5f;
     private ElementType attackElement;
@@ -19,14 +16,22 @@ public class PlayerProjectile : MonoBehaviour
     private Vector3 curveDirection;
     private float elapsedTime = 0f;
 
-    public void Initialize(Transform targetTransform, bool curveRight,ElementType element)
+    private float damage;
+
+    public void Initialize(
+        Transform targetTransform,
+        bool curveRight,
+        ElementType element,
+        float attackDamage)
     {
         target = targetTransform;
         attackElement = element;
+        damage = attackDamage;
 
-        // 좌/우 공격에 따라 바깥으로 휘는 방향 결정
         curveDirection =
-            curveRight ? transform.right : -transform.right;
+            curveRight
+            ? transform.right
+            : -transform.right;
 
         Destroy(gameObject, lifeTime);
     }

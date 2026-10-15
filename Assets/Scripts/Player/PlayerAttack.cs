@@ -6,7 +6,6 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private Transform projectileSpawnPoint;
     [SerializeField] private Transform dragon;
     [SerializeField] private GauntletManager gauntletManager;
-    [SerializeField] private float lightningDamage = 10f; //번개 데미지
 
     public void FireRightProjectile()
     {
@@ -22,6 +21,8 @@ public class PlayerAttack : MonoBehaviour
     {
         if (gauntletManager == null || dragon == null)
             return;
+
+        float attackDamage = gauntletManager.GetEquippedGauntletDamage();
 
         //번개 속성 공격(투사체 아니라 먼저 필터)
          if (gauntletManager.EquippedGauntlet ==
@@ -58,7 +59,7 @@ public class PlayerAttack : MonoBehaviour
                     dragonHealth = dragon.GetComponent<DragonHealth>();
 
                 if (dragonHealth != null)
-                    dragonHealth.TakeDamage(lightningDamage,ElementType.Lightning);
+                    dragonHealth.TakeDamage(attackDamage,ElementType.Lightning);
 
                 return;
             }
@@ -80,7 +81,7 @@ public class PlayerAttack : MonoBehaviour
 
         if (projectile != null)
         {
-            projectile.Initialize(dragon, curveRight,gauntletManager.EquippedGauntlet);
+            projectile.Initialize(dragon, curveRight,gauntletManager.EquippedGauntlet,attackDamage);
 
             GameObject projectileVFX = gauntletManager.GetProjectileVFX();
 

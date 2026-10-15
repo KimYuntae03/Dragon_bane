@@ -7158,9 +7158,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventoryManager
   gold: 10000
   upgradeStone: 10
-  ownedGauntletIds: []
-  ownedRobeIds: []
-  ownedItemIds: []
+  ownedGauntlets: []
+  ownedRobes: []
+  ownedItems: []
   ownedPetIds: []
   equippedGauntlet: 0
   equippedRobeId: 
@@ -11559,7 +11559,6 @@ MonoBehaviour:
   projectileSpawnPoint: {fileID: 1689446919}
   dragon: {fileID: 2074560848}
   gauntletManager: {fileID: 1981826457}
-  lightningDamage: 10
 --- !u!114 &1981826455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11606,6 +11605,9 @@ MonoBehaviour:
   fireProjectileVFX: {fileID: 2972392977303283589, guid: 81f0ae904db924e4e9cbbc6ac2f031c1, type: 3}
   windProjectileVFX: {fileID: 7966731087305637596, guid: 460babe280fe4aa41adc3fefd46f0c0b, type: 3}
   lightningProjectileVFX: {fileID: 5627696518775099638, guid: b9006bf1a0b6b994bbe0d867a1c2f33a, type: 3}
+  fireGauntletData: {fileID: 11400000, guid: 92dfc0645cf5fdc40aaa112a3299b21b, type: 2}
+  windGauntletData: {fileID: 11400000, guid: ba000d678b6a1fc4684b7e79f61651f0, type: 2}
+  lightningGauntletData: {fileID: 11400000, guid: d3af3fab1ca4258469a2b2fbb6967b51, type: 2}
 --- !u!1 &2000722250
 GameObject:
   m_ObjectHideFlags: 0
@@ -12122,7 +12124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8918cffdc886a4c408355bdd41fab33e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragonHealth
-  maxHealth: 20
+  maxHealth: 50
   hpFill: {fileID: 479564165}
   dragonHPText: {fileID: 2000722252}
   dragonController: {fileID: 2074560849}

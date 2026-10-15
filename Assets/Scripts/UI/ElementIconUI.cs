@@ -18,7 +18,16 @@ public class ElementIconUI : MonoBehaviour
 
     private void Start()
     {
-        UpdateElementIcons(); //게임 시작시 UpdateElementIcons호출
+        StartCoroutine(UpdateIconNextFrame());
+    }
+
+    private System.Collections.IEnumerator UpdateIconNextFrame()
+    {
+        // GauntletManager가 PlayerInventoryManager의
+        // 장착 정보를 먼저 적용하도록 한 프레임 대기
+        yield return null;
+
+        UpdateElementIcons();
     }
 
     public void UpdateElementIcons()

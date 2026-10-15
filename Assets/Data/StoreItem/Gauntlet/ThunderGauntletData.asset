@@ -14,6 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StoreItemData
   itemId: Thunder Gauntlet
   itemName: Thunder Gauntlet
+  itemDescription: 'Lightning Gauntlet
+
+    x1.5 damage vs. Fire Dragons'
   itemType: 0
   itemIcon: {fileID: 21300000, guid: 92b9b5cfadbd7f245a88ccce3c3a847b, type: 3}
   price: 1000
+  damage: 20
+  upgradeLevel: 0
+  quantity: 0
+  defense: 0
+  healAmount: 0
+  elementType: 1
