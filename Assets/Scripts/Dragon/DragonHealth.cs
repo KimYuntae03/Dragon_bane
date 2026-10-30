@@ -30,7 +30,10 @@ public class DragonHealth : MonoBehaviour
         UpdateHealthUI();
     }
 
-    public void TakeDamage(float damage, ElementType attackElement)
+    public void TakeDamage(
+        float damage,
+        ElementType attackElement,
+        bool isHighDamageRoll = false)
     {
         if (isDead)
             return;
@@ -41,15 +44,37 @@ public class DragonHealth : MonoBehaviour
                 attackElement
             );
 
-        float finalDamage = damage * multiplier;
+        int finalDamage = Mathf.Max(
+            0,
+            Mathf.RoundToInt(damage * multiplier)
+        );
 
         currentHealth -= finalDamage;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+
+        DamagePopupSpawner.ShowDamage(
+            finalDamage,
+            GetDamagePopupPosition(),
+            isHighDamageRoll
+        );
 
         UpdateHealthUI();
 
         if (currentHealth <= 0f)
             Die();
+    }
+
+    private Vector3 GetDamagePopupPosition()
+    {
+        Collider dragonCollider = GetComponentInChildren<Collider>();
+
+        if (dragonCollider != null)
+        {
+            Bounds bounds = dragonCollider.bounds;
+            return bounds.center + Vector3.up * bounds.extents.y * 0.35f;
+        }
+
+        return transform.position + Vector3.up * 2f;
     }
 
     private void UpdateHealthUI()

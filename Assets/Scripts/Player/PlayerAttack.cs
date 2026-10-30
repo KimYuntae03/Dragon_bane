@@ -7,6 +7,13 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private Transform dragon;
     [SerializeField] private GauntletManager gauntletManager;
 
+    [Header("Damage Variance")]
+    [SerializeField, Range(0f, 1f)]
+    private float damageReductionRate = 0.1f;
+
+    [SerializeField, Range(0f, 1f)]
+    private float damageIncreaseRate = 0.2f;
+
     public void FireRightProjectile()
     {
         PerformAttack(true);
@@ -22,7 +29,13 @@ public class PlayerAttack : MonoBehaviour
         if (gauntletManager == null || dragon == null)
             return;
 
-        float attackDamage = gauntletManager.GetEquippedGauntletDamage();
+        int baseDamage =
+            gauntletManager.GetEquippedGauntletDamage();
+
+        float attackDamage =
+            GetRandomizedDamage(baseDamage);
+
+        bool isHighDamageRoll = attackDamage > baseDamage;
 
         //번개 속성 공격(투사체 아니라 먼저 필터)
          if (gauntletManager.EquippedGauntlet ==
@@ -59,7 +72,11 @@ public class PlayerAttack : MonoBehaviour
                     dragonHealth = dragon.GetComponent<DragonHealth>();
 
                 if (dragonHealth != null)
-                    dragonHealth.TakeDamage(attackDamage,ElementType.Lightning);
+                    dragonHealth.TakeDamage(
+                        attackDamage,
+                        ElementType.Lightning,
+                        isHighDamageRoll
+                    );
 
                 return;
             }
@@ -81,12 +98,31 @@ public class PlayerAttack : MonoBehaviour
 
         if (projectile != null)
         {
-            projectile.Initialize(dragon, curveRight,gauntletManager.EquippedGauntlet,attackDamage);
+            projectile.Initialize(
+                dragon,
+                curveRight,
+                gauntletManager.EquippedGauntlet,
+                attackDamage,
+                isHighDamageRoll
+            );
 
             GameObject projectileVFX = gauntletManager.GetProjectileVFX();
 
             projectile.SetVFX(projectileVFX);
         
         }
+    }
+
+    private float GetRandomizedDamage(float baseDamage)
+    {
+        float reductionRate = Mathf.Clamp01(damageReductionRate);
+        float increaseRate = Mathf.Clamp01(damageIncreaseRate);
+
+        float multiplier = Random.Range(
+            1f - reductionRate,
+            1f + increaseRate
+        );
+
+        return Mathf.RoundToInt(baseDamage * multiplier);
     }
 }

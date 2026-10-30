@@ -7166,6 +7166,7 @@ MonoBehaviour:
   equippedRobeId: 
   equippedRobeHasElement: 0
   equippedRobeElement: 0
+  equippedRobeData: {fileID: 0}
   equippedPetId: 
   healthPotion: 3
 --- !u!4 &850382330
@@ -11563,6 +11564,7 @@ MonoBehaviour:
   projectileSpawnPoint: {fileID: 1689446919}
   dragon: {fileID: 2074560848}
   gauntletManager: {fileID: 1981826457}
+  damageVariance: 0.1
 --- !u!114 &1981826455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12128,7 +12130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8918cffdc886a4c408355bdd41fab33e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragonHealth
-  maxHealth: 50
+  maxHealth: 200
   hpFill: {fileID: 479564165}
   dragonHPText: {fileID: 2000722252}
   dragonController: {fileID: 2074560849}

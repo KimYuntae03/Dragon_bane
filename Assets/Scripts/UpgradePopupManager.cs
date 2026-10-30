@@ -5,6 +5,8 @@ using System.Collections;
 
 public class UpgradePopupManager : MonoBehaviour
 {
+    public static bool IsUpgradeInProgress { get; private set; }
+
     [Header("Popup")]
     [SerializeField] private GameObject upgradePopup;
 
@@ -27,10 +29,13 @@ public class UpgradePopupManager : MonoBehaviour
 
     private StoreItemData selectedItem;
     private bool isUpgrading;
+    private GameObject upgradeInputBlocker;
 
 
     private void Start()
     {
+        CreateUpgradeInputBlocker();
+
         if (upgradePopup != null)
             upgradePopup.SetActive(false);
 
@@ -46,6 +51,9 @@ public class UpgradePopupManager : MonoBehaviour
         // 강화 진행 UI 초기화
         if (upgradeProgressUI != null)
             upgradeProgressUI.SetActive(false);
+
+        if (upgradeInputBlocker != null)
+            upgradeInputBlocker.SetActive(false);
 
         if (upgradeGaugeFill != null)
             upgradeGaugeFill.fillAmount = 0f;
@@ -209,6 +217,7 @@ public class UpgradePopupManager : MonoBehaviour
             upgradePopup.SetActive(false);
 
         isUpgrading = true;
+        IsUpgradeInProgress = true;
 
         // 강화 게이지 연출 시작
         StartCoroutine(
@@ -223,8 +232,17 @@ public class UpgradePopupManager : MonoBehaviour
         bool isSuccess)
     {
         // 강화 진행 UI 표시
+        if (upgradeInputBlocker != null)
+        {
+            upgradeInputBlocker.SetActive(true);
+            upgradeInputBlocker.transform.SetAsLastSibling();
+        }
+
         if (upgradeProgressUI != null)
+        {
             upgradeProgressUI.SetActive(true);
+            upgradeProgressUI.transform.SetAsLastSibling();
+        }
 
         // 게이지 초기화
         if (upgradeGaugeFill != null)
@@ -256,6 +274,9 @@ public class UpgradePopupManager : MonoBehaviour
         // 진행 UI 종료
         if (upgradeProgressUI != null)
             upgradeProgressUI.SetActive(false);
+
+        if (upgradeInputBlocker != null)
+            upgradeInputBlocker.SetActive(false);
 
         // 강화 결과 적용
         if (isSuccess &&
@@ -290,6 +311,47 @@ public class UpgradePopupManager : MonoBehaviour
         }
 
         isUpgrading = false;
+        IsUpgradeInProgress = false;
+    }
+
+    private void CreateUpgradeInputBlocker()
+    {
+        if (upgradeProgressUI == null ||
+            upgradeProgressUI.transform.parent == null)
+        {
+            return;
+        }
+
+        upgradeInputBlocker = new GameObject(
+            "UpgradeInputBlocker",
+            typeof(RectTransform),
+            typeof(CanvasRenderer),
+            typeof(UnityEngine.UI.Image)
+        );
+
+        RectTransform blockerRect =
+            upgradeInputBlocker.GetComponent<RectTransform>();
+
+        blockerRect.SetParent(
+            upgradeProgressUI.transform.parent,
+            false
+        );
+        blockerRect.anchorMin = Vector2.zero;
+        blockerRect.anchorMax = Vector2.one;
+        blockerRect.offsetMin = Vector2.zero;
+        blockerRect.offsetMax = Vector2.zero;
+
+        UnityEngine.UI.Image blockerImage =
+            upgradeInputBlocker.GetComponent<UnityEngine.UI.Image>();
+
+        blockerImage.color = Color.clear;
+        blockerImage.raycastTarget = true;
+        upgradeInputBlocker.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        IsUpgradeInProgress = false;
     }
 
     

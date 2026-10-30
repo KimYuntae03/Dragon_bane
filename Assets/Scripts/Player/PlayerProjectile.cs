@@ -17,16 +17,19 @@ public class PlayerProjectile : MonoBehaviour
     private float elapsedTime = 0f;
 
     private float damage;
+    private bool isHighDamageRoll;
 
     public void Initialize(
         Transform targetTransform,
         bool curveRight,
         ElementType element,
-        float attackDamage)
+        float attackDamage,
+        bool highDamageRoll)
     {
         target = targetTransform;
         attackElement = element;
         damage = attackDamage;
+        isHighDamageRoll = highDamageRoll;
 
         curveDirection =
             curveRight
@@ -78,7 +81,11 @@ public class PlayerProjectile : MonoBehaviour
         if (dragonHealth == null)
             return;
 
-        dragonHealth.TakeDamage(damage,attackElement);
+        dragonHealth.TakeDamage(
+            damage,
+            attackElement,
+            isHighDamageRoll
+        );
 
         Destroy(gameObject);
     }

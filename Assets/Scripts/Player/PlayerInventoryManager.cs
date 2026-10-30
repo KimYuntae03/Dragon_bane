@@ -34,6 +34,8 @@ public class ItemInventoryData
 
 public class PlayerInventoryManager : MonoBehaviour
 {
+    private const string DefaultGauntletId = "Fire Gauntlet";
+
     public static PlayerInventoryManager Instance { get; private set; }
 
 
@@ -150,6 +152,10 @@ public class PlayerInventoryManager : MonoBehaviour
 
         // 씬이 변경되어도 플레이어 데이터 유지
         DontDestroyOnLoad(gameObject);
+
+        // 기본 장비: 불 속성 건틀릿은 처음부터 보유한다.
+        AddGauntlet(DefaultGauntletId);
+        equippedGauntlet = ElementType.Fire;
     }
 
 
