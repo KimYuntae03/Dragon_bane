@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using System.Collections;
 
 public class UpgradePopupManager : MonoBehaviour
 {
@@ -18,6 +20,11 @@ public class UpgradePopupManager : MonoBehaviour
     [SerializeField] private EquipmentUIManager equipmentUIManager;
     [SerializeField] private EquipmentDetailUI equipmentDetailUI;
 
+    [Header("Upgrade Progress")] //강화 게이지
+    [SerializeField] private GameObject upgradeProgressUI;
+    [SerializeField] private Image upgradeGaugeFill;
+    [SerializeField] private float upgradeDuration = 1f;
+
     private StoreItemData selectedItem;
 
 
@@ -25,6 +32,7 @@ public class UpgradePopupManager : MonoBehaviour
     {
         if (upgradePopup != null)
             upgradePopup.SetActive(false);
+
         if (notEnoughStoneUI != null)
             notEnoughStoneUI.SetActive(false);
 
@@ -33,6 +41,13 @@ public class UpgradePopupManager : MonoBehaviour
 
         if (upgradeFailUI != null)
             upgradeFailUI.SetActive(false);
+
+        // 강화 진행 UI 초기화
+        if (upgradeProgressUI != null)
+            upgradeProgressUI.SetActive(false);
+
+        if (upgradeGaugeFill != null)
+            upgradeGaugeFill.fillAmount = 0f;
     }
 
 
@@ -166,17 +181,64 @@ public class UpgradePopupManager : MonoBehaviour
         float successRate =
             GetUpgradeSuccessRate(currentLevel);
 
-        // 성공 여부 판정
         bool isSuccess =
             Random.value <= successRate;
 
+        // 기존 강화 확인 팝업 닫기
+        if (upgradePopup != null)
+            upgradePopup.SetActive(false);
+
+        // 강화 게이지 연출 시작
+        StartCoroutine(
+            PlayUpgradeProgress(isSuccess)
+        );
+    }
+    private IEnumerator PlayUpgradeProgress(bool isSuccess)
+    {
+        // 강화 진행 UI 표시
+        if (upgradeProgressUI != null)
+            upgradeProgressUI.SetActive(true);
+
+        // 게이지 초기화
+        if (upgradeGaugeFill != null)
+            upgradeGaugeFill.fillAmount = 0f;
+
+        float elapsedTime = 0f;
+
+        // 0 → 100%까지 게이지 채우기
+        while (elapsedTime < upgradeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            float progress =
+                elapsedTime / upgradeDuration;
+
+            if (upgradeGaugeFill != null)
+            {
+                upgradeGaugeFill.fillAmount =
+                    Mathf.Clamp01(progress);
+            }
+
+            yield return null;
+        }
+
+        // 확실하게 100%로 마무리
+        if (upgradeGaugeFill != null)
+            upgradeGaugeFill.fillAmount = 1f;
+
+        // 진행 UI 종료
+        if (upgradeProgressUI != null)
+            upgradeProgressUI.SetActive(false);
+
+        // 강화 결과 적용
         if (isSuccess)
         {
             PlayerInventoryManager.Instance
                 .UpgradeGauntlet(
                     selectedItem.ItemId
                 );
-            if (equipmentDetailUI != null) //성공했을때 상세창 업데이트
+
+            if (equipmentDetailUI != null)
                 equipmentDetailUI.RefreshSelectedItem();
 
             if (upgradeSuccessUI != null)
@@ -187,10 +249,6 @@ public class UpgradePopupManager : MonoBehaviour
             if (upgradeFailUI != null)
                 upgradeFailUI.SetActive(true);
         }
-
-        // 기존 강화 확인 팝업 닫기
-        if (upgradePopup != null)
-            upgradePopup.SetActive(false);
     }
 
     
