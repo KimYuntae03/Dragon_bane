@@ -97,23 +97,23 @@ public class EquipmentDetailUI : MonoBehaviour
                 break;
 
 
-            case StoreItemType.Robe:
-                
-                if (equipButton != null) //장착 버튼 활성화(건틀릿, 로브에만 적용)
-                    equipButton.SetActive(true);
+                case StoreItemType.Robe:
+                    
+                    if (equipButton != null)
+                        equipButton.SetActive(true);
 
-                if (upgradeButton != null)//강화버튼 활성화
-                    upgradeButton.SetActive(true);
+                    if (upgradeButton != null)
+                        upgradeButton.SetActive(true);
 
-                if (statText != null)
-                {
-                    int damage =
-                        PlayerInventoryManager.Instance
-                            .GetGauntletDamage(data);
+                    if (statText != null)
+                    {
+                         int healthBonus =
+                            PlayerInventoryManager.Instance
+                                .GetRobeHealthBonus(data);
 
-                    statText.text =
-                        "Damage : " + damage;
-                }
+                        statText.text =
+                            "Max HP : +" + healthBonus;
+                    }
 
                 if (upgradeText != null)
                 {
@@ -122,6 +122,12 @@ public class EquipmentDetailUI : MonoBehaviour
                             .GetRobeUpgradeLevel(
                                 data.ItemId
                             );
+                    if (upgradeButton != null)
+                    {
+                        upgradeButton.SetActive(
+                            level < 17
+                        );
+                    }
 
                     upgradeText.text =
                         "Upgrade : +" + level;
@@ -210,7 +216,7 @@ public class EquipmentDetailUI : MonoBehaviour
         else if (selectedItem.ItemType == StoreItemType.Robe)
         {
             PlayerInventoryManager.Instance.EquipRobe(
-                selectedItem.ItemId
+                selectedItem
             );
         }
         else if (selectedItem.ItemType == StoreItemType.Pet)

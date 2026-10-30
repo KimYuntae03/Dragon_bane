@@ -35,12 +35,14 @@ public class StoreItemData : ScriptableObject
     [SerializeField] private int quantity = 0;
 
     [Header("Item Stats")]
-    [SerializeField] private int defense;
     [SerializeField] private int healAmount;
+    [SerializeField] private int healthBonus;
 
-    [Header("Gauntlet Element")]//건틀릿 속성
+    [Header("Element")]
+    [SerializeField] private bool hasElement;
     [SerializeField] private ElementType elementType;
 
+    public bool HasElement => hasElement;
     public ElementType ElementType => elementType;
 
     public string ItemId => itemId;
@@ -52,7 +54,6 @@ public class StoreItemData : ScriptableObject
     public int Damage => damage;
     public int UpgradeLevel => upgradeLevel;
     public int Quantity => quantity;
-
-    public int Defense => defense;
+    public int HealthBonus => healthBonus;
     public int HealAmount => healAmount;
 }

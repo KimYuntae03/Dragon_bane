@@ -7164,6 +7164,8 @@ MonoBehaviour:
   ownedPetIds: []
   equippedGauntlet: 0
   equippedRobeId: 
+  equippedRobeHasElement: 0
+  equippedRobeElement: 0
   equippedPetId: 
   healthPotion: 3
 --- !u!4 &850382330
@@ -11469,10 +11471,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5279e06f90b64a48ac66fa86f588bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  maxHealth: 10
+  maxHealth: 100
   hpFill: {fileID: 665074679}
   playerHPText: {fileID: 1970165634}
   playerController: {fileID: 1981826449}
+  dragonHealth: {fileID: 0}
+  sameElementDamageReduction: 0.2
   hitReaction: {fileID: 1981826455}
   healVFX: {fileID: 339158821923109191, guid: 108ca465382c11742bd2c91fe4fdb13f, type: 3}
   healEffectPoint: {fileID: 1778944304}

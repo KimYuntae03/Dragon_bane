@@ -26,6 +26,7 @@ public class UpgradePopupManager : MonoBehaviour
     [SerializeField] private float upgradeDuration = 1f;
 
     private StoreItemData selectedItem;
+    private bool isUpgrading;
 
 
     private void Start()
@@ -54,7 +55,8 @@ public class UpgradePopupManager : MonoBehaviour
     // 선택한 장비의 강화 팝업 열기
     public void OpenUpgradePopup(StoreItemData itemData)
     {
-        if (itemData == null ||
+        if (isUpgrading ||
+            itemData == null ||
             PlayerInventoryManager.Instance == null)
             return;
 
@@ -136,19 +138,37 @@ public class UpgradePopupManager : MonoBehaviour
     // 실제 강화 로직은 나중에 구현
     public void UpgradeSelectedItem()
     {
-        if (selectedItem == null ||
+        if (isUpgrading ||
+            selectedItem == null ||
             PlayerInventoryManager.Instance == null)
             return;
 
-        // 현재는 건틀릿만 강화 테스트
-        if (selectedItem.ItemType != StoreItemType.Gauntlet)
-            return;
+        // 연출 도중 다른 아이템을 선택해도
+        // 처음 강화한 장비가 유지되도록 참조를 고정한다.
+        StoreItemData itemToUpgrade = selectedItem;
 
-        int currentLevel =
-            PlayerInventoryManager.Instance
-                .GetGauntletUpgradeLevel(
-                    selectedItem.ItemId
-                );
+        int currentLevel = 0;
+
+        if (itemToUpgrade.ItemType == StoreItemType.Gauntlet)
+        {
+            currentLevel =
+                PlayerInventoryManager.Instance
+                    .GetGauntletUpgradeLevel(
+                        itemToUpgrade.ItemId
+                    );
+        }
+        else if (itemToUpgrade.ItemType == StoreItemType.Robe)
+        {
+            currentLevel =
+                PlayerInventoryManager.Instance
+                    .GetRobeUpgradeLevel(
+                        itemToUpgrade.ItemId
+                    );
+        }
+        else
+        {
+            return;
+        }
 
         // 최대 강화
         if (currentLevel >= 17)
@@ -188,12 +208,19 @@ public class UpgradePopupManager : MonoBehaviour
         if (upgradePopup != null)
             upgradePopup.SetActive(false);
 
+        isUpgrading = true;
+
         // 강화 게이지 연출 시작
         StartCoroutine(
-            PlayUpgradeProgress(isSuccess)
+            PlayUpgradeProgress(
+                itemToUpgrade,
+                isSuccess
+            )
         );
     }
-    private IEnumerator PlayUpgradeProgress(bool isSuccess)
+    private IEnumerator PlayUpgradeProgress(
+        StoreItemData itemToUpgrade,
+        bool isSuccess)
     {
         // 강화 진행 UI 표시
         if (upgradeProgressUI != null)
@@ -231,12 +258,24 @@ public class UpgradePopupManager : MonoBehaviour
             upgradeProgressUI.SetActive(false);
 
         // 강화 결과 적용
-        if (isSuccess)
+        if (isSuccess &&
+            itemToUpgrade != null &&
+            PlayerInventoryManager.Instance != null)
         {
-            PlayerInventoryManager.Instance
-                .UpgradeGauntlet(
-                    selectedItem.ItemId
-                );
+            if (itemToUpgrade.ItemType == StoreItemType.Gauntlet)
+            {
+                PlayerInventoryManager.Instance
+                    .UpgradeGauntlet(
+                        itemToUpgrade.ItemId
+                    );
+            }
+            else if (itemToUpgrade.ItemType == StoreItemType.Robe)
+            {
+                PlayerInventoryManager.Instance
+                    .UpgradeRobe(
+                        itemToUpgrade.ItemId
+                    );
+            }
 
             if (equipmentDetailUI != null)
                 equipmentDetailUI.RefreshSelectedItem();
@@ -249,6 +288,8 @@ public class UpgradePopupManager : MonoBehaviour
             if (upgradeFailUI != null)
                 upgradeFailUI.SetActive(true);
         }
+
+        isUpgrading = false;
     }
 
     

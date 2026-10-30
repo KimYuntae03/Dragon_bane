@@ -74,6 +74,15 @@ public class PlayerInventoryManager : MonoBehaviour
     private string equippedRobeId = "";
 
     [SerializeField]
+    private bool equippedRobeHasElement = false;
+
+    [SerializeField]
+    private ElementType equippedRobeElement = ElementType.Fire;
+
+    [SerializeField]
+    private StoreItemData equippedRobeData;
+
+    [SerializeField]
     private string equippedPetId = "";
 
 
@@ -221,6 +230,52 @@ public class PlayerInventoryManager : MonoBehaviour
             : 0;
     }
 
+    // 로브 강화
+    public bool UpgradeRobe(string itemId)
+    {
+        EquipmentInventoryData data =
+            ownedRobes.Find(
+                item => item.itemId == itemId
+            );
+
+        if (data == null)
+            return false;
+
+        // 최대 +17
+        if (data.upgradeLevel >= 17)
+            return false;
+
+        data.upgradeLevel++;
+
+        return true;
+    }
+
+    // 로브의 최종 최대 체력 증가량
+    public int GetRobeHealthBonus(StoreItemData itemData)
+    {
+        if (itemData == null)
+            return 0;
+
+        int level =
+            GetRobeUpgradeLevel(
+                itemData.ItemId
+            );
+
+        float finalHealthBonus =
+            itemData.HealthBonus *
+            (1f + level * 0.2f);
+
+        return Mathf.RoundToInt(finalHealthBonus);
+    }
+
+    public int GetEquippedRobeHealthBonus()
+    {
+        if (equippedRobeData == null)
+            return 0;
+
+        return GetRobeHealthBonus(equippedRobeData);
+    }
+
 
     // =========================
     // Item
@@ -326,13 +381,29 @@ public class PlayerInventoryManager : MonoBehaviour
 
 
     // 로브 장착
-    public void EquipRobe(string itemId)
+    public void EquipRobe(StoreItemData robeData)
     {
-        // 보유하지 않은 로브는 장착 불가
-        if (!HasRobe(itemId))
+        if (robeData == null ||
+            robeData.ItemType != StoreItemType.Robe)
             return;
 
-        equippedRobeId = itemId;
+        // 보유하지 않은 로브는 장착 불가
+        if (!HasRobe(robeData.ItemId))
+            return;
+
+        equippedRobeId = robeData.ItemId;
+        equippedRobeHasElement = robeData.HasElement;
+        equippedRobeElement = robeData.ElementType;
+        equippedRobeData = robeData;
+    }
+
+    public bool TryGetEquippedRobeElement(
+        out ElementType robeElement)
+    {
+        robeElement = equippedRobeElement;
+
+        return !string.IsNullOrEmpty(equippedRobeId) &&
+               equippedRobeHasElement;
     }
 
     public void EquipPet(string itemId)

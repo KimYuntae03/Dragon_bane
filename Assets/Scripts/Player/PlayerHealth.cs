@@ -14,6 +14,11 @@ public class PlayerHealth : MonoBehaviour
     [Header("Controller")]
     [SerializeField] private PlayerController playerController;
 
+    [Header("Element Resistance")]
+    [SerializeField] private DragonHealth dragonHealth;
+    [SerializeField, Range(0f, 1f)]
+    private float sameElementDamageReduction = 0.2f;
+
     //플레이어 피격 시 애니메이션 호출 변수
     [SerializeField] private PlayerHitReaction hitReaction;
 
@@ -26,6 +31,7 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private DefeatResultDirector defeatResultDirector;
 
     private float currentHealth;
+    private float baseMaxHealth;
     private bool isDead = false;
     public enum HitType
     {
@@ -35,6 +41,32 @@ public class PlayerHealth : MonoBehaviour
 
     private void Awake()
     {
+        baseMaxHealth = maxHealth;
+
+        if (dragonHealth == null)
+            dragonHealth = FindFirstObjectByType<DragonHealth>();
+
+        currentHealth = maxHealth;
+        UpdateHealthUI();
+    }
+
+    private void Start()
+    {
+        ApplyEquippedRobeHealthBonus();
+    }
+
+    private void ApplyEquippedRobeHealthBonus()
+    {
+        int robeHealthBonus = 0;
+
+        if (PlayerInventoryManager.Instance != null)
+        {
+            robeHealthBonus =
+                PlayerInventoryManager.Instance
+                    .GetEquippedRobeHealthBonus();
+        }
+
+        maxHealth = baseMaxHealth + robeHealthBonus;
         currentHealth = maxHealth;
         UpdateHealthUI();
     }
@@ -44,7 +76,9 @@ public class PlayerHealth : MonoBehaviour
         if (isDead)
             return;
 
-        currentHealth -= damage;
+        float finalDamage = CalculateIncomingDamage(damage);
+
+        currentHealth -= finalDamage;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
 
         UpdateHealthUI();
@@ -61,6 +95,27 @@ public class PlayerHealth : MonoBehaviour
             else if (hitType == HitType.Flame)
                 hitReaction.PlayFlameHitReaction();
         }
+    }
+
+    private float CalculateIncomingDamage(float damage)
+    {
+        PlayerInventoryManager inventory =
+            PlayerInventoryManager.Instance;
+
+        if (inventory == null || dragonHealth == null)
+            return damage;
+
+        if (!inventory.TryGetEquippedRobeElement(
+                out ElementType robeElement))
+            return damage;
+
+        if (robeElement != dragonHealth.DragonElement)
+            return damage;
+
+        float reduction =
+            Mathf.Clamp01(sameElementDamageReduction);
+
+        return damage * (1f - reduction);
     }
 
     private void UpdateHealthUI()
