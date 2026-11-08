@@ -332,6 +332,21 @@ public class PlayerInventoryManager : MonoBehaviour
             : 0;
     }
 
+    public bool UseItem(string itemId)
+    {
+        ItemInventoryData item =
+            ownedItems.Find(
+                data => data.itemId == itemId
+            );
+
+        if (item == null || item.quantity <= 0)
+            return false;
+
+        item.quantity--;
+
+        return true;
+    }
+
 
     // =========================
     // Pet

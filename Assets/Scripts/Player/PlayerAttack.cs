@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
@@ -13,6 +14,9 @@ public class PlayerAttack : MonoBehaviour
 
     [SerializeField, Range(0f, 1f)]
     private float damageIncreaseRate = 0.2f;
+
+    private float damagePotionMultiplier = 1f;
+    private Coroutine damagePotionCoroutine;
 
     public void FireRightProjectile()
     {
@@ -32,10 +36,14 @@ public class PlayerAttack : MonoBehaviour
         int baseDamage =
             gauntletManager.GetEquippedGauntletDamage();
 
-        float attackDamage =
-            GetRandomizedDamage(baseDamage);
+        int boostedBaseDamage = Mathf.RoundToInt(
+            baseDamage * damagePotionMultiplier
+        );
 
-        bool isHighDamageRoll = attackDamage > baseDamage;
+        float attackDamage =
+            GetRandomizedDamage(boostedBaseDamage);
+
+        bool isHighDamageRoll = attackDamage > boostedBaseDamage;
 
         //번개 속성 공격(투사체 아니라 먼저 필터)
          if (gauntletManager.EquippedGauntlet ==
@@ -124,5 +132,30 @@ public class PlayerAttack : MonoBehaviour
         );
 
         return Mathf.RoundToInt(baseDamage * multiplier);
+    }
+
+    public void ApplyDamagePotion(
+        float bonusRate,
+        float duration)
+    {
+        if (damagePotionCoroutine != null)
+            StopCoroutine(damagePotionCoroutine);
+
+        damagePotionMultiplier =
+            1f + Mathf.Max(0f, bonusRate);
+
+        damagePotionCoroutine = StartCoroutine(
+            ResetDamagePotionAfter(duration)
+        );
+    }
+
+    private IEnumerator ResetDamagePotionAfter(float duration)
+    {
+        yield return new WaitForSeconds(
+            Mathf.Max(0f, duration)
+        );
+
+        damagePotionMultiplier = 1f;
+        damagePotionCoroutine = null;
     }
 }

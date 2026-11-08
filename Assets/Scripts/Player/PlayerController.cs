@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private PlayerHitReaction playerHitReaction;
 
+    [SerializeField] private BattleItemUIManager battleItemUIManager;
+
     private bool isAttacking = false;
     private bool hasEnteredAttackState = false;
     private bool useRightAttack = true;
@@ -93,14 +95,33 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (Keyboard.current.hKey.wasPressedThisFrame)//H키 누르면 힐(임시)
+        if (Keyboard.current.hKey.wasPressedThisFrame)
         {
-            //구르기, 쉴드, 피격중에는 힐 불가
             if (!playerDodge.IsDodging &&
                 !playerShield.IsGuarding &&
                 !playerHitReaction.IsHitReacting)
             {
-                playerHealth.Heal(20f);
+                battleItemUIManager.UseHealPotion();
+            }
+        }
+
+        if (Keyboard.current.jKey.wasPressedThisFrame)
+        {
+            if (!playerDodge.IsDodging &&
+                !playerShield.IsGuarding &&
+                !playerHitReaction.IsHitReacting)
+            {
+                battleItemUIManager.UseLargeHealPotion();
+            }
+        }
+
+        if (Keyboard.current.kKey.wasPressedThisFrame)
+        {
+            if (!playerDodge.IsDodging &&
+                !playerShield.IsGuarding &&
+                !playerHitReaction.IsHitReacting)
+            {
+                battleItemUIManager.UseDamagePotion();
             }
         }
     }
