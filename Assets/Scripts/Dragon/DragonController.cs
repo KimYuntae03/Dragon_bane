@@ -29,11 +29,8 @@ public class DragonController : MonoBehaviour
     private bool battleActive = false;//전투 활성화,비활성화 변수
     private Coroutine attackRoutine;
 
-    private static readonly int ClawAttackHash =
-        Animator.StringToHash("ClawAttack");
-
-    private static readonly int FlameAttackHash =
-        Animator.StringToHash("FlameAttack");
+    private int primaryAttackHash = Animator.StringToHash("ClawAttack");
+    private int secondaryAttackHash = Animator.StringToHash("FlameAttack");
 
     private static readonly int DieHash =
         Animator.StringToHash("Die");
@@ -83,11 +80,11 @@ public class DragonController : MonoBehaviour
 
         if (randomAttack == 0)
         {
-            animator.SetTrigger(ClawAttackHash);
+            animator.SetTrigger(primaryAttackHash);
         }
         else
         {
-            animator.SetTrigger(FlameAttackHash);
+            animator.SetTrigger(secondaryAttackHash);
         }
     }
 
@@ -128,8 +125,8 @@ public class DragonController : MonoBehaviour
         if (flameHitbox != null)
             flameHitbox.SetActive(false);
             
-        animator.ResetTrigger(ClawAttackHash);
-        animator.ResetTrigger(FlameAttackHash);
+        animator.ResetTrigger(primaryAttackHash);
+        animator.ResetTrigger(secondaryAttackHash);
 
         animator.SetTrigger(DieHash);
     }
@@ -178,9 +175,50 @@ public class DragonController : MonoBehaviour
             chargeHitbox.SetActive(false);
     }
 
+    public void StartSecondaryMeleeHitbox()
+    {
+        if (flameHitbox != null)
+            flameHitbox.SetActive(true);
+    }
+
+    public void StopSecondaryMeleeHitbox()
+    {
+        if (flameHitbox != null)
+            flameHitbox.SetActive(false);
+    }
+
+    public void ConfigureAttackProfile(
+        Animator newAnimator,
+        string primaryTrigger,
+        string secondaryTrigger,
+        GameObject primaryHitbox,
+        GameObject secondaryHitbox)
+    {
+        if (newAnimator != null)
+            animator = newAnimator;
+
+        primaryAttackHash = Animator.StringToHash(primaryTrigger);
+        secondaryAttackHash = Animator.StringToHash(secondaryTrigger);
+        chargeHitbox = primaryHitbox;
+        flameHitbox = secondaryHitbox;
+        flameEffect = null;
+        flamePoint = null;
+
+        if (chargeHitbox != null)
+            chargeHitbox.SetActive(false);
+        if (flameHitbox != null)
+            flameHitbox.SetActive(false);
+    }
+
     public void EndAttack()
     {
         isAttacking = false;
+    }
+
+    public void SetAnimator(Animator newAnimator)
+    {
+        if (newAnimator != null)
+            animator = newAnimator;
     }
 
     public void SetBattleActive(bool active)

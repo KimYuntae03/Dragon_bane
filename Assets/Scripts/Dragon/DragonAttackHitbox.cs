@@ -15,6 +15,12 @@ public class DragonAttackHitbox : MonoBehaviour
 
     private bool hasHitPlayer = false;
 
+    public void Configure(AttackType type, float attackDamage)
+    {
+        attackType = type;
+        damage = attackDamage;
+    }
+
     private void OnEnable()
     {
         hasHitPlayer = false;

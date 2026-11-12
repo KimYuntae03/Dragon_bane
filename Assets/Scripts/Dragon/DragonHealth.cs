@@ -92,6 +92,11 @@ public class DragonHealth : MonoBehaviour
         }
     }
 
+    public void SetDragonElement(ElementType element)
+    {
+        dragonElement = element;
+    }
+
     private void Die()
     {
         if (isDead)
