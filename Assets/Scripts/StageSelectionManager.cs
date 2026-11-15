@@ -5,12 +5,16 @@ using UnityEngine.UI;
 
 public static class StageSelectionManager
 {
+    private const string Stage1ClearKey = "Stage1Cleared";
+    private const string LockedStageSpritePath = "UI/LockedStage";
     private const int DefaultStage = 2;
     private const string MainMapSceneName = "Mainmap";
     private const string BattleSceneName = "BattleScene";
     private const string DragonResourceFolder = "Dragons/Stage";
 
     public static int SelectedStage { get; private set; } = DefaultStage;
+    public static int LastGoldReward { get; private set; }
+    public static int LastUpgradeStoneReward { get; private set; }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetState()
@@ -38,6 +42,7 @@ public static class StageSelectionManager
         if (scene.name == MainMapSceneName)
         {
             BindStageButtons();
+            BindQuitButton();
             return;
         }
 
@@ -47,6 +52,15 @@ public static class StageSelectionManager
 
     private static void BindStageButtons()
     {
+        bool stage2Unlocked =
+            PlayerPrefs.GetInt(Stage1ClearKey, 0) == 1;
+
+        bool stage3Unlocked =
+            PlayerPrefs.GetInt("Stage2Cleared", 0) == 1;
+
+        Sprite lockedStageSprite =
+            Resources.Load<Sprite>(LockedStageSpritePath);
+
         Button[] buttons = Object.FindObjectsByType<Button>(
             FindObjectsInactive.Include,
             FindObjectsSortMode.None
@@ -62,9 +76,127 @@ public static class StageSelectionManager
             }
 
             int selectedStage = stageNumber;
+
+            bool isLocked =
+                (selectedStage == 2 && !stage2Unlocked) ||
+                (selectedStage == 3 && !stage3Unlocked);
+
+            if (isLocked)
+            {
+                button.interactable = false;
+
+                UnityEngine.UI.Image buttonImage =
+                    button.GetComponent<UnityEngine.UI.Image>();
+
+                if (buttonImage != null && lockedStageSprite != null)
+                    buttonImage.sprite = lockedStageSprite;
+
+                continue;
+            }
+
+            button.interactable = true;
             button.onClick.AddListener(
                 () => EnterStage(selectedStage)
             );
+        }
+    }
+
+    private static void BindQuitButton()
+    {
+        Button[] buttons = Object.FindObjectsByType<Button>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None
+        );
+
+        foreach (Button button in buttons)
+        {
+            string buttonName = button.gameObject.name
+                .Replace(" ", string.Empty)
+                .ToLowerInvariant();
+
+            TMPro.TMP_Text tmpLabel =
+                button.GetComponentInChildren<TMPro.TMP_Text>(true);
+
+            UnityEngine.UI.Text legacyLabel =
+                button.GetComponentInChildren<UnityEngine.UI.Text>(true);
+
+            string labelText = tmpLabel != null
+                ? tmpLabel.text
+                : legacyLabel != null
+                    ? legacyLabel.text
+                    : string.Empty;
+
+            string normalizedLabel = labelText
+                .Replace(" ", string.Empty)
+                .ToLowerInvariant();
+
+            if (buttonName != "quitgame" &&
+                normalizedLabel != "quitgame")
+                continue;
+
+            button.onClick.AddListener(QuitGame);
+            break;
+        }
+    }
+
+    private static void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
+    public static void CompleteCurrentStage()
+    {
+        GetStageRewards(
+            SelectedStage,
+            out int goldReward,
+            out int stoneReward
+        );
+
+        string clearKey = "Stage" + SelectedStage + "Cleared";
+        bool isFirstClear = PlayerPrefs.GetInt(clearKey, 0) == 0;
+
+        if (!isFirstClear)
+        {
+            goldReward /= 2;
+            stoneReward /= 2;
+        }
+
+        LastGoldReward = goldReward;
+        LastUpgradeStoneReward = stoneReward;
+
+        if (PlayerInventoryManager.Instance != null)
+        {
+            PlayerInventoryManager.Instance.AddGold(goldReward);
+            PlayerInventoryManager.Instance.AddUpgradeStone(stoneReward);
+        }
+
+        PlayerPrefs.SetInt(clearKey, 1);
+        PlayerPrefs.Save();
+    }
+
+    private static void GetStageRewards(
+        int stageNumber,
+        out int goldReward,
+        out int stoneReward)
+    {
+        switch (stageNumber)
+        {
+            case 1:
+                goldReward = 500;
+                stoneReward = 15;
+                break;
+            case 3:
+                goldReward = 2000;
+                stoneReward = 30;
+                break;
+            default:
+                goldReward = 1200;
+                stoneReward = 20;
+                break;
         }
     }
 
@@ -104,6 +236,14 @@ public static class StageSelectionManager
             GetStageElement(SelectedStage)
         );
 
+        GetStageBattleStats(
+            SelectedStage,
+            out float maxHealth,
+            out float attackDamage
+        );
+
+        dragonHealth.SetMaxHealth(maxHealth);
+
         GameObject stageDragonPrefab =
             Resources.Load<GameObject>(
                 DragonResourceFolder + SelectedStage
@@ -112,12 +252,50 @@ public static class StageSelectionManager
         // Stage 2와 아직 프리팹이 없는 스테이지는
         // BattleScene의 기본 Red Dragon을 그대로 사용한다.
         if (stageDragonPrefab == null)
+        {
+            ApplyAttackDamage(dragonHealth.gameObject, attackDamage);
             return;
+        }
 
         ApplyDragonVisual(
             dragonHealth.gameObject,
             stageDragonPrefab
         );
+
+        ApplyAttackDamage(dragonHealth.gameObject, attackDamage);
+    }
+
+    private static void GetStageBattleStats(
+        int stageNumber,
+        out float maxHealth,
+        out float attackDamage)
+    {
+        switch (stageNumber)
+        {
+            case 1:
+                maxHealth = 225f;
+                attackDamage = 20f;
+                break;
+            case 3:
+                maxHealth = 1000f;
+                attackDamage = 50f;
+                break;
+            default:
+                maxHealth = 400f;
+                attackDamage = 30f;
+                break;
+        }
+    }
+
+    private static void ApplyAttackDamage(
+        GameObject dragonRoot,
+        float attackDamage)
+    {
+        DragonAttackHitbox[] hitboxes =
+            dragonRoot.GetComponentsInChildren<DragonAttackHitbox>(true);
+
+        foreach (DragonAttackHitbox hitbox in hitboxes)
+            hitbox.SetDamage(attackDamage);
     }
 
     private static ElementType GetStageElement(int stageNumber)

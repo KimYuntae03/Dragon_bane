@@ -21,6 +21,11 @@ public class DragonAttackHitbox : MonoBehaviour
         damage = attackDamage;
     }
 
+    public void SetDamage(float attackDamage)
+    {
+        damage = attackDamage;
+    }
+
     private void OnEnable()
     {
         hasHitPlayer = false;

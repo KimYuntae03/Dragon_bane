@@ -194,6 +194,11 @@ public class DragonController : MonoBehaviour
         GameObject primaryHitbox,
         GameObject secondaryHitbox)
     {
+        if (chargeHitbox != null)
+            chargeHitbox.SetActive(false);
+        if (flameHitbox != null)
+            flameHitbox.SetActive(false);
+
         if (newAnimator != null)
             animator = newAnimator;
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class BattleResultDirector : MonoBehaviour
 {
@@ -227,6 +228,8 @@ public class BattleResultDirector : MonoBehaviour
 
     private IEnumerator ShowRewardsSequentially() //보상 효과
     {
+        UpdateRewardTexts();
+
         if (expReward != null)
         {
             yield return StartCoroutine(FadeInReward(expReward));
@@ -242,6 +245,30 @@ public class BattleResultDirector : MonoBehaviour
         if (upgradeStoneReward != null)
         {
             yield return StartCoroutine(FadeInReward(upgradeStoneReward));
+        }
+    }
+
+    private void UpdateRewardTexts()
+    {
+        if (goldReward != null)
+        {
+            TMP_Text goldText =
+                goldReward.GetComponentInChildren<TMP_Text>(true);
+
+            if (goldText != null)
+                goldText.text = StageSelectionManager.LastGoldReward.ToString();
+        }
+
+        if (upgradeStoneReward != null)
+        {
+            TMP_Text stoneText =
+                upgradeStoneReward.GetComponentInChildren<TMP_Text>(true);
+
+            if (stoneText != null)
+            {
+                stoneText.text =
+                    StageSelectionManager.LastUpgradeStoneReward.ToString();
+            }
         }
     }
     private IEnumerator FadeInReward(CanvasGroup reward)//공통 페이드 함수

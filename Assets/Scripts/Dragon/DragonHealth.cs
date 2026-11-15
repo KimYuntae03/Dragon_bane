@@ -97,12 +97,21 @@ public class DragonHealth : MonoBehaviour
         dragonElement = element;
     }
 
+    public void SetMaxHealth(float health)
+    {
+        maxHealth = Mathf.Max(1f, health);
+        currentHealth = maxHealth;
+        UpdateHealthUI();
+    }
+
     private void Die()
     {
         if (isDead)
             return;
 
         isDead = true;
+
+        StageSelectionManager.CompleteCurrentStage();
 
         if (dragonController != null)
 

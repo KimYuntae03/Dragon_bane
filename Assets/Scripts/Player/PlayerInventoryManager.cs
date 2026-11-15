@@ -377,6 +377,11 @@ public class PlayerInventoryManager : MonoBehaviour
         return gold >= amount;
     }
 
+    public void AddGold(int amount)
+    {
+        gold += Mathf.Max(0, amount);
+    }
+
 
     // 골드 사용
     public bool SpendGold(int amount)
@@ -439,6 +444,11 @@ public class PlayerInventoryManager : MonoBehaviour
     public bool HasEnoughUpgradeStone(int amount)
     {
         return upgradeStone >= amount;
+    }
+
+    public void AddUpgradeStone(int amount)
+    {
+        upgradeStone += Mathf.Max(0, amount);
     }
 
 
