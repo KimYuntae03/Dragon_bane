@@ -11,6 +11,7 @@ public static class StageSelectionManager
     private const string MainMapSceneName = "Mainmap";
     private const string BattleSceneName = "BattleScene";
     private const string DragonResourceFolder = "Dragons/Stage";
+    private const float Stage1OrbitRadius = 6.5f;
 
     public static int SelectedStage { get; private set; } = DefaultStage;
     public static int LastGoldReward { get; private set; }
@@ -254,6 +255,7 @@ public static class StageSelectionManager
         if (stageDragonPrefab == null)
         {
             ApplyAttackDamage(dragonHealth.gameObject, attackDamage);
+            ApplyPlayerOrbitRadius();
             return;
         }
 
@@ -263,6 +265,27 @@ public static class StageSelectionManager
         );
 
         ApplyAttackDamage(dragonHealth.gameObject, attackDamage);
+        ApplyPlayerOrbitRadius();
+    }
+
+    private static void ApplyPlayerOrbitRadius()
+    {
+        if (SelectedStage != 1)
+            return;
+
+        PlayerDodge playerDodge =
+            Object.FindFirstObjectByType<PlayerDodge>();
+
+        if (playerDodge != null)
+        {
+            playerDodge.SetOrbitRadius(Stage1OrbitRadius);
+
+            CameraFollow cameraFollow =
+                Object.FindFirstObjectByType<CameraFollow>();
+
+            if (cameraFollow != null)
+                cameraFollow.SnapIntroViewToPlayer();
+        }
     }
 
     private static void GetStageBattleStats(

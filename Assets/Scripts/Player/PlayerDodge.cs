@@ -17,6 +17,40 @@ public class PlayerDodge : MonoBehaviour
 
     public bool IsDodging => isDodging;
 
+    public bool IsEvadingHorn
+    {
+        get
+        {
+            if (!isDodging || animator == null)
+                return false;
+
+            AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+            bool inDodgeState =
+                state.shortNameHash == DodgeLeftStateHash ||
+                state.shortNameHash == DodgeRightStateHash;
+
+            return inDodgeState && state.normalizedTime >= 0.25f;
+        }
+    }
+
+    // 전투 시작 시 스테이지별 원 궤도의 반지름만 변경한다.
+    public void SetOrbitRadius(float radius)
+    {
+        if (dragon == null || radius <= 0f || isDodging)
+            return;
+
+        Vector3 offset = transform.position - dragon.position;
+        offset.y = 0f;
+
+        if (offset.sqrMagnitude < 0.001f)
+            offset = -dragon.forward;
+
+        Vector3 position = dragon.position + offset.normalized * radius;
+        position.y = transform.position.y;
+        transform.position = position;
+        FaceDragon();
+    }
+
     private static readonly int DodgeLeftHash =
         Animator.StringToHash("DodgeLeft");
 
@@ -71,12 +105,14 @@ public class PlayerDodge : MonoBehaviour
 
         Vector3 startPosition = transform.position;
         Vector3 startOffset = startPosition - center;
+        float startHeight = startOffset.y;
+        startOffset.y = 0f;
 
         Quaternion finalOrbitRotation =
             Quaternion.Euler(0f, angle, 0f);
 
         Vector3 targetPosition =
-            center + finalOrbitRotation * startOffset;
+            center + finalOrbitRotation * startOffset + Vector3.up * startHeight;
 
         Vector3 dodgeDirection =
             targetPosition - startPosition;
@@ -133,7 +169,7 @@ public class PlayerDodge : MonoBehaviour
                 );
 
             transform.position =
-                center + orbitRotation * startOffset;
+                center + orbitRotation * startOffset + Vector3.up * startHeight;
 
             yield return null;
         }

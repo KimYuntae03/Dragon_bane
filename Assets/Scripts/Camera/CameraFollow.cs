@@ -15,6 +15,30 @@ public class CameraFollow : MonoBehaviour
 
     private bool battleActive = false;
 
+    public void SnapIntroViewToPlayer()
+    {
+        if (player == null || dragon == null)
+            return;
+
+        Vector3 radialDirection = player.position - dragon.position;
+        radialDirection.y = 0f;
+
+        if (radialDirection.sqrMagnitude < 0.001f)
+            return;
+
+        radialDirection.Normalize();
+
+        // Stage1 대기 화면만 플레이어 뒤쪽에서 더 가까이 잡는다.
+        transform.position =
+            player.position + radialDirection * 2f + Vector3.up * height;
+
+        Vector3 lookTarget =
+            player.position - radialDirection * 2f + Vector3.up * 1.5f;
+
+        transform.rotation =
+            Quaternion.LookRotation(lookTarget - transform.position);
+    }
+
     private void LateUpdate()
     {
         if (!battleActive)//게임 시작 전에는 비활성화

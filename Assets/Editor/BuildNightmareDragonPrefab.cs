@@ -49,8 +49,9 @@ public static class BuildNightmareDragonPrefab
         animator.applyRootMotion = false;
 
         Transform head = FindDeepChild(instance.transform, "Head") ?? animator.transform;
-        GameObject hornHitbox = CreateHitbox(head, "HornHitbox", new Vector3(0f, 0f, 1.4f), new Vector3(2.4f, 2f, 3.2f));
-        GameObject clawHitbox = CreateHitbox(head, "ClawHitbox", new Vector3(0f, -0.25f, 0.9f), new Vector3(3.8f, 2.8f, 3.4f));
+        Transform rightHand = FindDeepChild(instance.transform, "R_Hand") ?? head;
+        GameObject hornHitbox = CreateHitbox(head, "HornHitbox", new Vector3(0f, 0f, 140f), new Vector3(1.8f, 2f, 3.2f));
+        GameObject clawHitbox = CreateHitbox(rightHand, "ClawHitbox", Vector3.zero, new Vector3(3.2f, 2.5f, 4.5f));
 
         NightmareDragonCombatSetup setup = instance.AddComponent<NightmareDragonCombatSetup>();
         setup.Configure(animator, hornHitbox, clawHitbox);
@@ -101,8 +102,8 @@ public static class BuildNightmareDragonPrefab
     {
         AnimationUtility.SetAnimationEvents(clip, new[]
         {
-            new AnimationEvent { time = clip.length * 0.28f, functionName = startFunction },
-            new AnimationEvent { time = clip.length * 0.68f, functionName = stopFunction },
+            new AnimationEvent { time = clip.length * (startFunction == "StartClawHitbox" ? 0.52f : 0.62f), functionName = startFunction },
+            new AnimationEvent { time = clip.length * (startFunction == "StartClawHitbox" ? 0.64f : 0.70f), functionName = stopFunction },
             new AnimationEvent { time = clip.length * 0.92f, functionName = "EndAttack" }
         });
         EditorUtility.SetDirty(clip);
@@ -147,6 +148,8 @@ public static class BuildNightmareDragonPrefab
         GameObject hitbox = new GameObject(name);
         hitbox.transform.SetParent(parent, false);
         hitbox.transform.localPosition = position;
+        // Nightmare 본 계층이 0.01 배율이므로 월드 히트박스 크기를 보정한다.
+        hitbox.transform.localScale = Vector3.one * 100f;
         BoxCollider collider = hitbox.AddComponent<BoxCollider>();
         collider.isTrigger = true; collider.size = size;
         DragonAttackHitbox damage = hitbox.AddComponent<DragonAttackHitbox>();

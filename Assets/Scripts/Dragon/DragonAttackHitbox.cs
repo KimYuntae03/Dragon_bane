@@ -14,6 +14,25 @@ public class DragonAttackHitbox : MonoBehaviour
     
 
     private bool hasHitPlayer = false;
+    private Transform attackCenter;
+    private Vector3 attackDirection;
+    private float minimumHitAngle;
+    private float maximumHitAngle;
+    private bool dodgeAvoidsAttack;
+
+    public void SetAttackArc(
+        Transform center,
+        Vector3 direction,
+        float minimumAngle,
+        float maximumAngle,
+        bool allowDodgeEvasion = false)
+    {
+        attackCenter = center;
+        attackDirection = Vector3.ProjectOnPlane(direction, Vector3.up).normalized;
+        minimumHitAngle = minimumAngle;
+        maximumHitAngle = maximumAngle;
+        dodgeAvoidsAttack = allowDodgeEvasion;
+    }
 
     public void Configure(AttackType type, float attackDamage)
     {
@@ -47,6 +66,13 @@ public class DragonAttackHitbox : MonoBehaviour
         // ShieldCollider 자체는 무시
         if (other.gameObject.layer == LayerMask.NameToLayer("Shield"))
             return;
+
+        // 타격 구간에 이미 플레이어와 겹친 채 켜진 근접 판정도 감지한다.
+        if (attackType == AttackType.Charge)
+        {
+            TryDamagePlayer(other);
+            return;
+        }
 
         if (attackType != AttackType.Flame)
             return;
@@ -86,7 +112,31 @@ public class DragonAttackHitbox : MonoBehaviour
         if (playerHealth == null)
             return;
 
+        if (dodgeAvoidsAttack)
+        {
+            PlayerDodge dodge = playerHealth.GetComponent<PlayerDodge>();
+            if (dodge != null && dodge.IsEvadingHorn)
+                return;
+        }
+
+        if (attackCenter != null && attackDirection.sqrMagnitude > 0f)
+        {
+            Vector3 playerDirection = playerHealth.transform.position - attackCenter.position;
+            playerDirection.y = 0f;
+            float angle = Vector3.SignedAngle(
+                attackDirection,
+                playerDirection,
+                Vector3.up
+            );
+
+            if (angle < minimumHitAngle || angle > maximumHitAngle)
+                return;
+        }
+
         hasHitPlayer = true;
+#if UNITY_EDITOR
+        Debug.Log($"Dragon hitbox hit player: {gameObject.name}", this);
+#endif
         playerHealth.TakeDamage(damage,PlayerHealth.HitType.Claw);
     }
 }
